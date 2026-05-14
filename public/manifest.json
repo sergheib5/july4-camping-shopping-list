@@ -1,0 +1,19 @@
+{
+  "name": "July 4 weekend campout — list & meals",
+  "short_name": "July 4 campout",
+  "description": "Independence Day weekend campout shopping list and cook plan — real-time Firestore sync.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "scope": "./"
+}

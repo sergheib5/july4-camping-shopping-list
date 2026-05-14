@@ -1,0 +1,77 @@
+:root {
+  --color-navy-deep: #070b14;
+  --color-navy: #0f172a;
+  --color-navy-soft: #152238;
+  --color-amber: #f0b429;
+  --color-amber-deep: #c47f08;
+  --color-cream: #f4f1e8;
+  --color-cream-muted: #c5cad6;
+  --color-accent-red: #b83232;
+  --color-accent-blue: #4a6fa5;
+  --color-paper: #fdfaf3;
+
+  font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+  color: var(--color-navy);
+  background-color: var(--color-paper);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--color-navy-deep);
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.03) 0 1px,
+      transparent 1px 10px
+    ),
+    radial-gradient(120% 80% at 50% -10%, #1a2d52 0%, var(--color-navy-deep) 55%, #04060c 100%);
+  background-attachment: fixed;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-amber-deep);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-amber);
+}

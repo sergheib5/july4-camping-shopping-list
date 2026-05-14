@@ -1,0 +1,58 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+import { useTripCountdown } from './useTripCountdown';
+
+describe('useTripCountdown', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.useRealTimers();
+  });
+
+  it('should report "before" phase and countdown when now is before trip start', () => {
+    vi.stubEnv('VITE_TRIP_START', '2026-07-02');
+    vi.stubEnv('VITE_TRIP_END', '2026-07-05');
+    vi.setSystemTime(new Date('2026-06-01T12:00:00'));
+
+    const { result } = renderHook(() => useTripCountdown());
+    expect(result.current.phase).toBe('before');
+    expect(result.current.days).toBeGreaterThan(0);
+  });
+
+  it('should report "on" phase during the trip window', () => {
+    vi.stubEnv('VITE_TRIP_START', '2026-07-02');
+    vi.stubEnv('VITE_TRIP_END', '2026-07-05');
+    vi.setSystemTime(new Date('2026-07-03T15:00:00'));
+
+    const { result } = renderHook(() => useTripCountdown());
+    expect(result.current.phase).toBe('on');
+    expect(result.current.nightCaption.length).toBeGreaterThan(0);
+  });
+
+  it('should report "after" phase once the inclusive end day has passed', () => {
+    vi.stubEnv('VITE_TRIP_START', '2026-07-02');
+    vi.stubEnv('VITE_TRIP_END', '2026-07-05');
+    vi.setSystemTime(new Date('2026-07-06T12:00:00'));
+
+    const { result } = renderHook(() => useTripCountdown());
+    expect(result.current.phase).toBe('after');
+  });
+
+  it('should tick once per second', () => {
+    vi.stubEnv('VITE_TRIP_START', '2026-07-02');
+    vi.stubEnv('VITE_TRIP_END', '2026-07-05');
+    vi.setSystemTime(new Date('2026-06-01T12:00:00'));
+
+    const { result } = renderHook(() => useTripCountdown());
+    const first = result.current.display.seconds;
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(result.current.display.seconds).not.toBe(first);
+  });
+});

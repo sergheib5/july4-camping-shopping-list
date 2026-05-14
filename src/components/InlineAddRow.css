@@ -1,0 +1,261 @@
+.inline-add-row {
+  display: grid;
+  grid-template-columns: 2fr 80px 180px 150px;
+  gap: 12px;
+  padding: 16px 20px;
+  background: white;
+  border-radius: 12px;
+  align-items: center;
+  position: relative;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+  z-index: 1;
+  overflow: visible;
+}
+
+.col-item-wide {
+  min-width: 0;
+}
+
+.item-input {
+  width: 100%;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.item-input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.col-store-compact,
+.col-salad-compact {
+  min-width: 0;
+}
+
+.col-quantity-compact {
+  min-width: 0;
+  position: relative;
+  z-index: 10;
+  order: 2;
+}
+
+.col-quantity-first {
+  order: 2;
+}
+
+.inline-input,
+.inline-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.inline-input:focus,
+.inline-select:focus {
+  outline: none;
+  border-color: #ff9800;
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+}
+
+.inline-select {
+  cursor: pointer;
+  padding: 10px 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 28px;
+}
+
+.inline-select option {
+  padding: 10px 12px;
+  line-height: 1.6;
+  text-align: left;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.inline-select option:checked {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.quantity-input {
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  background: white;
+}
+
+@media (max-width: 768px) {
+  .inline-add-row {
+    grid-template-columns: 2fr 65px 130px 110px;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+
+  .inline-input,
+  .inline-select {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .inline-select {
+    padding: 7px 24px 7px 8px;
+    font-size: 11px;
+    background-position: right 6px center;
+    z-index: 1;
+  }
+
+  .quantity-input {
+    z-index: 10;
+    background: white;
+  }
+}
+
+@media (max-width: 480px) {
+  .inline-add-row {
+    grid-template-columns: 2fr 70px 65px 60px;
+    gap: 4px;
+    padding: 6px 8px;
+  }
+
+  .col-quantity-first {
+    order: 2;
+  }
+
+  .inline-input,
+  .inline-select {
+    font-size: 11px;
+    padding: 6px 5px;
+  }
+
+  .item-input {
+    font-size: 13px;
+    padding: 6px 6px;
+  }
+
+  .inline-select {
+    padding: 6px 18px 6px 4px;
+    font-size: 10px;
+    max-width: 100%;
+    line-height: 1.3;
+    background-position: right 5px center;
+    background-size: 10px;
+  }
+
+  .inline-select option {
+    padding: 8px 10px;
+    line-height: 1.5;
+  }
+
+  .quantity-input {
+    font-size: 12px;
+    padding: 7px 6px;
+    min-width: 65px;
+    z-index: 100;
+    background: #fff9e6;
+    font-weight: 700;
+    border: 2px solid #ff9800;
+    box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
+  }
+
+  .quantity-input:focus {
+    background: white;
+    border-color: #ff9800;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
+  }
+
+  .col-quantity-compact {
+    z-index: 100;
+    position: relative;
+  }
+
+  .col-store-compact,
+  .col-salad-compact {
+    overflow: visible;
+    min-width: 0;
+    z-index: 2;
+  }
+
+  .col-store-compact .inline-select,
+  .col-salad-compact .inline-select {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+    z-index: 2;
+  }
+
+  .col-quantity-compact {
+    overflow: visible;
+    z-index: 100;
+  }
+}
+
+/* Optimized specifically for 390px width (iPhone 12/13/14) */
+@media (max-width: 400px) and (min-width: 370px) {
+  .inline-add-row {
+    grid-template-columns: 2fr 68px 63px 58px;
+    gap: 3px;
+    padding: 6px 7px;
+  }
+
+  .quantity-input {
+    font-size: 11px;
+    min-width: 63px;
+    font-weight: 700;
+    padding: 7px 5px;
+    background: #fff9e6;
+    border: 2px solid #ff9800;
+    box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
+  }
+
+  .inline-select {
+    font-size: 9px;
+    padding: 5px 16px 5px 3px;
+  }
+
+  .item-input {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .inline-add-row {
+    grid-template-columns: 2fr 50px 65px 55px;
+    gap: 2px;
+    padding: 5px 4px;
+  }
+
+  .inline-select {
+    font-size: 8px;
+    padding: 4px 2px;
+  }
+
+  .item-input {
+    font-size: 11px;
+  }
+
+  .quantity-input {
+    font-size: 8px;
+    min-width: 45px;
+    padding: 4px 2px;
+  }
+
+  .col-quantity-compact {
+    z-index: 10;
+  }
+}

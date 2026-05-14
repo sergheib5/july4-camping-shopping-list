@@ -1,0 +1,76 @@
+.countdown-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.countdown-container--status .countdown-label {
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  letter-spacing: 0.04em;
+  font-size: 1.05rem;
+  color: var(--color-amber, #f0b429);
+}
+
+.countdown-sub {
+  font-size: 0.72rem;
+  color: var(--color-cream-muted, #c5cad6);
+  line-height: 1.25;
+  max-width: 18rem;
+}
+
+.countdown-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-cream, #f4f1e8);
+  white-space: nowrap;
+}
+
+.countdown-time {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex-wrap: wrap;
+}
+
+.time-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.25rem;
+}
+
+.time-value {
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--color-amber, #f0b429);
+  letter-spacing: 0.06em;
+}
+
+.time-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: var(--color-cream-muted, #c5cad6);
+  margin-top: 0.1rem;
+}
+
+.time-separator {
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-size: 1.2rem;
+  color: var(--color-accent-blue, #4a6fa5);
+  padding: 0 0.05rem;
+  line-height: 1;
+}
+
+@media (max-width: 480px) {
+  .time-value {
+    font-size: 1.15rem;
+  }
+
+  .countdown-sub {
+    font-size: 0.68rem;
+  }
+}
