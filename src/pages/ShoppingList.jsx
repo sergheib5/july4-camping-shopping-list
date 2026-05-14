@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
+import ConfirmDeleteDialog from '../components/ConfirmDeleteDialog';
 import InlineAddRow from '../components/InlineAddRow';
 import EditableShoppingRow from '../components/EditableShoppingRow';
 import SearchField from '../components/SearchField';
@@ -32,6 +33,7 @@ const ShoppingList = () => {
   const [selectedStore, setSelectedStore] = useState('All');
   const [selectedMeal, setSelectedMeal] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [pendingDeleteId, setPendingDeleteId] = useState(null);
   const previousCompletedStoresRef = useRef(new Set());
   const wasFullyCompleteRef = useRef(false);
   const isInitialLoadRef = useRef(true);
@@ -147,16 +149,28 @@ const ShoppingList = () => {
     }
   };
 
-  const handleDeleteItem = async (id) => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      try {
-        await deleteShoppingItem(id);
-      } catch (error) {
-        console.error('Error deleting item:', error);
-        alert('Failed to delete item. Please try again.');
-      }
+  const closeDeleteDialog = useCallback(() => setPendingDeleteId(null), []);
+
+  const handleRequestDeleteItem = (id) => {
+    setPendingDeleteId(id);
+  };
+
+  const handleConfirmDeleteItem = async () => {
+    const id = pendingDeleteId;
+    if (!id) return;
+    setPendingDeleteId(null);
+    try {
+      await deleteShoppingItem(id);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('Failed to delete item. Please try again.');
     }
   };
+
+  const pendingDeleteItem = useMemo(
+    () => (pendingDeleteId ? items.find((i) => i.id === pendingDeleteId) : null),
+    [items, pendingDeleteId],
+  );
 
   const filteredItems = items.filter((item) => {
     const matchesStore =
@@ -332,7 +346,7 @@ const ShoppingList = () => {
                             menuItems={menuItems}
                             hideMealBadge
                             onToggle={handleToggleItem}
-                            onDelete={handleDeleteItem}
+                            onDelete={handleRequestDeleteItem}
                             onSave={handleUpdateItem}
                           />
                         ))}
@@ -345,6 +359,12 @@ const ShoppingList = () => {
           </div>
         </div>
       </main>
+      <ConfirmDeleteDialog
+        open={pendingDeleteId != null}
+        detail={pendingDeleteItem?.name || null}
+        onCancel={closeDeleteDialog}
+        onConfirm={handleConfirmDeleteItem}
+      />
       <BottomNav />
     </div>
   );

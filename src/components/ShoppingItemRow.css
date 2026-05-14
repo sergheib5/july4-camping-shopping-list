@@ -32,13 +32,24 @@
 }
 
 .col-item {
-  font-weight: 500;
+  font-weight: 400;
   color: #333;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.col-item__name {
+  font-weight: 600;
+  font-synthesis: weight;
 }
 
 .strikethrough {
   text-decoration: line-through;
   color: #999;
+}
+
+.strikethrough .col-item__name {
+  color: inherit;
 }
 
 .col-store {
@@ -115,6 +126,10 @@
     font-size: 11px;
     padding: 3px 10px;
   }
+
+  .col-item {
+    font-size: 16px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -131,6 +146,10 @@
   .store-badge {
     font-size: 10px;
     padding: 2px 8px;
+  }
+
+  .col-item {
+    font-size: 15px;
   }
 }
 

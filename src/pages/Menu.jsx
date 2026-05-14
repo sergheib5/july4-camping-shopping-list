@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
+import ConfirmDeleteDialog from '../components/ConfirmDeleteDialog';
 import MenuItemForm from '../components/MenuItemForm';
 import { 
   subscribeToMenu, 
@@ -12,6 +13,7 @@ import './Menu.css';
 
 const Menu = () => {
   const [menuItems, setMenuItems] = useState([]);
+  const [pendingDeleteId, setPendingDeleteId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [formType, setFormType] = useState('daily'); // 'daily', 'salad', 'snack', 'drink'
@@ -51,16 +53,32 @@ const Menu = () => {
     }
   };
 
-  const handleDeleteItem = async (id) => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      try {
-        await deleteMenuItem(id);
-      } catch (error) {
-        console.error('Error deleting item:', error);
-        alert('Failed to delete item. Please try again.');
-      }
+  const closeDeleteDialog = useCallback(() => setPendingDeleteId(null), []);
+
+  const handleRequestDeleteItem = (id) => {
+    setPendingDeleteId(id);
+  };
+
+  const handleConfirmDeleteItem = async () => {
+    const id = pendingDeleteId;
+    if (!id) return;
+    setPendingDeleteId(null);
+    try {
+      await deleteMenuItem(id);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('Failed to delete item. Please try again.');
     }
   };
+
+  const pendingDeleteItem = useMemo(
+    () => (pendingDeleteId ? menuItems.find((i) => i.id === pendingDeleteId) : null),
+    [menuItems, pendingDeleteId],
+  );
+
+  const pendingDeleteDetail =
+    pendingDeleteItem?.name ||
+    (pendingDeleteItem?.date ? String(pendingDeleteItem.date) : null);
 
   const handleEditItem = (item) => {
     setEditingItem(item);
@@ -123,7 +141,7 @@ const Menu = () => {
                           className="cancel-button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteItem(item.id);
+                            handleRequestDeleteItem(item.id);
                           }}
                           aria-label="Delete item"
                           title="Delete item"
@@ -168,7 +186,7 @@ const Menu = () => {
                           className="cancel-button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteItem(item.id);
+                            handleRequestDeleteItem(item.id);
                           }}
                           aria-label="Delete item"
                           title="Delete item"
@@ -205,7 +223,7 @@ const Menu = () => {
                       className="cancel-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDeleteItem(item.id);
+                        handleRequestDeleteItem(item.id);
                       }}
                       aria-label="Delete item"
                       title="Delete item"
@@ -240,7 +258,7 @@ const Menu = () => {
                       className="cancel-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDeleteItem(item.id);
+                        handleRequestDeleteItem(item.id);
                       }}
                       aria-label="Delete item"
                       title="Delete item"
@@ -263,6 +281,14 @@ const Menu = () => {
           />
         )}
       </main>
+      <ConfirmDeleteDialog
+        open={pendingDeleteId != null}
+        title="Remove this row?"
+        message="It will disappear from your menu. You can add it again anytime."
+        detail={pendingDeleteDetail}
+        onCancel={closeDeleteDialog}
+        onConfirm={handleConfirmDeleteItem}
+      />
       <BottomNav />
     </div>
   );

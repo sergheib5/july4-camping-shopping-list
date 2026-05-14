@@ -284,14 +284,14 @@ const EditableShoppingRow = ({
       </div>
       <div className="col-item">
         <span className={item.checked ? 'strikethrough' : ''}>
-          {item.name || 'Unnamed Item'}
+          <strong className="col-item__name">{item.name || 'Unnamed Item'}</strong>
         </span>
       </div>
       <div className="col-store">
         <span
           className="store-badge"
           style={{ backgroundColor: getStoreColor(item.store) }}
-          title={!STORES.includes(storeLabel) ? storeLabel : undefined}
+          title={storeLabel}
         >
           {storeLabel}
         </span>

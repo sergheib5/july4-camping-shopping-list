@@ -24,7 +24,7 @@ const ShoppingItemRow = ({ item, onToggle, onDelete, onEdit }) => {
       </div>
       <div className="col-item" onClick={() => onEdit(item)}>
         <span className={item.checked ? 'strikethrough' : ''}>
-          {item.name || 'Unnamed Item'}
+          <strong className="col-item__name">{item.name || 'Unnamed Item'}</strong>
         </span>
       </div>
       <div className="col-store">

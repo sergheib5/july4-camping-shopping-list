@@ -95,16 +95,6 @@ const InlineAddRow = ({ onSave, campMealOptions = [] }) => {
           required
         />
       </div>
-      <div className="col-quantity-compact col-quantity-first">
-        <input
-          type="text"
-          value={formData.quantity}
-          onChange={(e) => handleChange('quantity', e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Qty"
-          className="inline-input quantity-input"
-        />
-      </div>
       <div className="col-store-compact">
         <select
           value={formData.store}
@@ -135,6 +125,16 @@ const InlineAddRow = ({ onSave, campMealOptions = [] }) => {
             </option>
           ))}
         </select>
+      </div>
+      <div className="col-quantity-compact">
+        <input
+          type="text"
+          value={formData.quantity}
+          onChange={(e) => handleChange('quantity', e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Qty"
+          className="inline-input quantity-input"
+        />
       </div>
     </form>
   );

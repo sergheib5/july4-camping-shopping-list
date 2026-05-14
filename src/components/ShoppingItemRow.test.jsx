@@ -154,7 +154,7 @@ describe('ShoppingItemRow', () => {
     );
 
     const itemName = screen.getByText('Test Item');
-    expect(itemName).toHaveClass('strikethrough');
+    expect(itemName.closest('span')).toHaveClass('strikethrough');
   });
 
   it('should handle missing item name', () => {

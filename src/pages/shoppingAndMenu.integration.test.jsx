@@ -34,19 +34,16 @@ const renderMenu = () =>
 
 describe('Shopping list & menu (in-memory Firebase)', () => {
   let user;
-  let confirmSpy;
   let consoleLogSpy;
 
   beforeEach(() => {
     __resetFirebaseMemory();
     user = userEvent.setup();
-    confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
     consoleLogSpy.mockRestore();
-    confirmSpy.mockRestore();
   });
 
   it('adds shopping items for a camp meal across two stores, then removes them', async () => {
@@ -108,11 +105,13 @@ describe('Shopping list & menu (in-memory Firebase)', () => {
     expect(deleteButtons).toHaveLength(2);
 
     await user.click(deleteButtons[0]);
+    await user.click(screen.getByRole('button', { name: 'Remove' }));
     await waitFor(() => {
       expect(screen.getAllByRole('button', { name: 'Delete item' })).toHaveLength(1);
     });
 
     await user.click(screen.getByRole('button', { name: 'Delete item' }));
+    await user.click(screen.getByRole('button', { name: 'Remove' }));
     await waitFor(() => {
       expect(screen.queryByRole('button', { name: 'Delete item' })).not.toBeInTheDocument();
     });
@@ -168,6 +167,7 @@ describe('Shopping list & menu (in-memory Firebase)', () => {
       const row = cell.closest('.menu-row, .snack-item');
       expect(row).toBeTruthy();
       await user.click(within(row).getByRole('button', { name: 'Delete item' }));
+      await user.click(screen.getByRole('button', { name: 'Remove' }));
     }
 
     await waitFor(() => {

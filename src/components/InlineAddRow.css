@@ -1,6 +1,7 @@
 .inline-add-row {
   display: grid;
-  grid-template-columns: 2fr 80px 180px 150px;
+  /* Item name → store (needs readable width) → meal → compact qty */
+  grid-template-columns: minmax(0, 2fr) minmax(132px, 1.45fr) minmax(120px, 1.15fr) 58px;
   gap: 12px;
   padding: 16px 20px;
   background: white;
@@ -35,13 +36,6 @@
 
 .col-quantity-compact {
   min-width: 0;
-  position: relative;
-  z-index: 10;
-  order: 2;
-}
-
-.col-quantity-first {
-  order: 2;
 }
 
 .inline-input,
@@ -95,15 +89,13 @@
 
 .quantity-input {
   text-align: center;
-  position: relative;
-  z-index: 10;
   background: white;
 }
 
 @media (max-width: 768px) {
   .inline-add-row {
-    grid-template-columns: 2fr 65px 130px 110px;
-    gap: 6px;
+    grid-template-columns: minmax(0, 1.6fr) minmax(104px, 1.25fr) minmax(96px, 1fr) 52px;
+    gap: 8px;
     padding: 10px 12px;
   }
 
@@ -115,46 +107,33 @@
 
   .inline-select {
     padding: 7px 24px 7px 8px;
-    font-size: 11px;
     background-position: right 6px center;
-    z-index: 1;
-  }
-
-  .quantity-input {
-    z-index: 10;
-    background: white;
   }
 }
 
 @media (max-width: 480px) {
   .inline-add-row {
-    grid-template-columns: 2fr 70px 65px 60px;
-    gap: 4px;
-    padding: 6px 8px;
-  }
-
-  .col-quantity-first {
-    order: 2;
+    grid-template-columns: minmax(0, 1.35fr) minmax(96px, 1.2fr) minmax(92px, 1fr) 48px;
+    gap: 6px;
+    padding: 8px 10px;
   }
 
   .inline-input,
   .inline-select {
-    font-size: 11px;
-    padding: 6px 5px;
+    font-size: 12px;
+    padding: 7px 8px;
   }
 
   .item-input {
     font-size: 13px;
-    padding: 6px 6px;
+    padding: 7px 8px;
   }
 
   .inline-select {
-    padding: 6px 18px 6px 4px;
-    font-size: 10px;
-    max-width: 100%;
-    line-height: 1.3;
-    background-position: right 5px center;
-    background-size: 10px;
+    padding: 7px 22px 7px 6px;
+    font-size: 11px;
+    background-position: right 6px center;
+    background-size: 11px;
   }
 
   .inline-select option {
@@ -165,67 +144,26 @@
   .quantity-input {
     font-size: 12px;
     padding: 7px 6px;
-    min-width: 65px;
-    z-index: 100;
-    background: #fff9e6;
-    font-weight: 700;
-    border: 2px solid #ff9800;
-    box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
-  }
-
-  .quantity-input:focus {
-    background: white;
-    border-color: #ff9800;
-    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
-  }
-
-  .col-quantity-compact {
-    z-index: 100;
-    position: relative;
-  }
-
-  .col-store-compact,
-  .col-salad-compact {
-    overflow: visible;
     min-width: 0;
-    z-index: 2;
-  }
-
-  .col-store-compact .inline-select,
-  .col-salad-compact .inline-select {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    position: relative;
-    z-index: 2;
-  }
-
-  .col-quantity-compact {
-    overflow: visible;
-    z-index: 100;
+    font-weight: 600;
   }
 }
 
-/* Optimized specifically for 390px width (iPhone 12/13/14) */
 @media (max-width: 400px) and (min-width: 370px) {
   .inline-add-row {
-    grid-template-columns: 2fr 68px 63px 58px;
-    gap: 3px;
-    padding: 6px 7px;
+    grid-template-columns: minmax(0, 1.2fr) minmax(92px, 1.15fr) minmax(88px, 0.95fr) 46px;
+    gap: 5px;
+    padding: 7px 8px;
   }
 
   .quantity-input {
     font-size: 11px;
-    min-width: 63px;
-    font-weight: 700;
-    padding: 7px 5px;
-    background: #fff9e6;
-    border: 2px solid #ff9800;
-    box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
+    padding: 6px 4px;
   }
 
   .inline-select {
-    font-size: 9px;
-    padding: 5px 16px 5px 3px;
+    font-size: 10px;
+    padding: 6px 20px 6px 5px;
   }
 
   .item-input {
@@ -235,14 +173,14 @@
 
 @media (max-width: 360px) {
   .inline-add-row {
-    grid-template-columns: 2fr 50px 65px 55px;
-    gap: 2px;
-    padding: 5px 4px;
+    grid-template-columns: minmax(0, 1fr) minmax(84px, 1.05fr) minmax(78px, 0.9fr) 44px;
+    gap: 4px;
+    padding: 6px 6px;
   }
 
   .inline-select {
-    font-size: 8px;
-    padding: 4px 2px;
+    font-size: 10px;
+    padding: 6px 18px 6px 4px;
   }
 
   .item-input {
@@ -250,12 +188,7 @@
   }
 
   .quantity-input {
-    font-size: 8px;
-    min-width: 45px;
-    padding: 4px 2px;
-  }
-
-  .col-quantity-compact {
-    z-index: 10;
+    font-size: 11px;
+    padding: 6px 4px;
   }
 }
