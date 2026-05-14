@@ -1,40 +1,48 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
 import InlineAddRow from '../components/InlineAddRow';
 import EditableShoppingRow from '../components/EditableShoppingRow';
 import SearchField from '../components/SearchField';
-import useSalads from '../hooks/useSalads';
-import { 
-  subscribeToShoppingList, 
+import useMenuMeals from '../hooks/useMenuMeals';
+import {
+  subscribeToShoppingList,
   addShoppingItem,
   updateShoppingItem,
   toggleShoppingItem,
-  deleteShoppingItem 
+  deleteShoppingItem,
 } from '../firebase/db';
-import { STORES, getStoreColor } from '../utils/constants';
+import { STORES, getStoreColor, normalizeRetailStore } from '../utils/constants';
+import {
+  resolveNormalizedMealKey,
+  labelForMealKey,
+  UNASSIGNED_MEAL_VALUE,
+  getMealColor,
+} from '../utils/menuMeals';
 import { triggerStoreConfetti, triggerCompleteConfetti } from '../utils/confetti';
 import './ShoppingList.css';
 
+const NO_MEAL_SECTION = 'No meal assigned';
+
+const storeBucket = (item) => normalizeRetailStore(item.store);
+
 const ShoppingList = () => {
-  const salads = useSalads();
+  const { menuItems, mealOptions, campMealOptions } = useMenuMeals();
   const [items, setItems] = useState([]);
   const [selectedStore, setSelectedStore] = useState('All');
-  const [selectedSalad, setSelectedSalad] = useState('All');
+  const [selectedMeal, setSelectedMeal] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const previousCompletedStoresRef = useRef(new Set());
   const wasFullyCompleteRef = useRef(false);
   const isInitialLoadRef = useRef(true);
   const confettiCleanupRef = useRef(null);
 
-  // Helper function to calculate store completion status
   const calculateStoreCompletion = (itemsList) => {
     const storeItems = {};
     const completedStores = new Set();
 
-    // Group items by store
-    itemsList.forEach(item => {
-      const store = item.store || 'Other';
+    itemsList.forEach((item) => {
+      const store = storeBucket(item);
       if (!storeItems[store]) {
         storeItems[store] = { total: 0, checked: 0 };
       }
@@ -44,73 +52,61 @@ const ShoppingList = () => {
       }
     });
 
-    // Find stores that are 100% complete (have items and all are checked)
-    Object.keys(storeItems).forEach(store => {
-      const storeData = storeItems[store];
-      if (storeData.total > 0 && storeData.checked === storeData.total) {
+    Object.keys(storeItems).forEach((store) => {
+      const d = storeItems[store];
+      if (d.total > 0 && d.checked === d.total) {
         completedStores.add(store);
       }
     });
 
-    // Check if entire list is complete
     const totalItems = itemsList.length;
-    const checkedItems = itemsList.filter(item => item.checked).length;
+    const checkedItems = itemsList.filter((item) => item.checked).length;
     const isFullyComplete = totalItems > 0 && checkedItems === totalItems;
 
     return { completedStores, isFullyComplete };
   };
 
   useEffect(() => {
-    const unsubscribe = subscribeToShoppingList((items) => {
-      setItems(items);
+    const unsubscribe = subscribeToShoppingList((list) => {
+      setItems(list);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // Track store completion and trigger confetti
   useEffect(() => {
-    // Skip confetti on initial load
     if (isInitialLoadRef.current) {
       isInitialLoadRef.current = false;
-      // Set initial state without triggering confetti
-      const storeCompletion = calculateStoreCompletion(items);
-      previousCompletedStoresRef.current = new Set(storeCompletion.completedStores);
-      wasFullyCompleteRef.current = storeCompletion.isFullyComplete;
+      const sc = calculateStoreCompletion(items);
+      previousCompletedStoresRef.current = new Set(sc.completedStores);
+      wasFullyCompleteRef.current = sc.isFullyComplete;
       return;
     }
 
-    // Cleanup any pending confetti animations before triggering new ones
     if (confettiCleanupRef.current) {
       confettiCleanupRef.current();
       confettiCleanupRef.current = null;
     }
 
-    const storeCompletion = calculateStoreCompletion(items);
-    const currentCompletedStores = new Set(storeCompletion.completedStores);
+    const sc = calculateStoreCompletion(items);
+    const currentCompletedStores = new Set(sc.completedStores);
     const previousCompletedStores = previousCompletedStoresRef.current;
 
-    // Check for newly completed stores
-    currentCompletedStores.forEach(store => {
+    currentCompletedStores.forEach((store) => {
       if (!previousCompletedStores.has(store)) {
-        // Store just became complete - trigger confetti!
         const storeColor = getStoreColor(store);
         triggerStoreConfetti(store, storeColor);
       }
     });
 
-    // Check if entire list just became 100% complete
-    if (storeCompletion.isFullyComplete && !wasFullyCompleteRef.current) {
-      // Entire list just became complete - big celebration!
+    if (sc.isFullyComplete && !wasFullyCompleteRef.current) {
       const cleanup = triggerCompleteConfetti();
       confettiCleanupRef.current = cleanup;
     }
 
-    // Update refs for next comparison
     previousCompletedStoresRef.current = currentCompletedStores;
-    wasFullyCompleteRef.current = storeCompletion.isFullyComplete;
+    wasFullyCompleteRef.current = sc.isFullyComplete;
 
-    // Cleanup function to cancel pending animations when effect re-runs or component unmounts
     return () => {
       if (confettiCleanupRef.current) {
         confettiCleanupRef.current();
@@ -119,10 +115,14 @@ const ShoppingList = () => {
     };
   }, [items]);
 
+  const effectiveSelectedMeal = useMemo(() => {
+    if (selectedMeal === 'All' || selectedMeal === UNASSIGNED_MEAL_VALUE) return 'All';
+    return campMealOptions.some((o) => o.value === selectedMeal) ? selectedMeal : 'All';
+  }, [selectedMeal, campMealOptions]);
+
   const handleAddItem = async (itemData) => {
     try {
       await addShoppingItem(itemData);
-      // Add row stays visible for continuous adding
     } catch (error) {
       console.error('Error adding item:', error);
       alert('Failed to add item. Please try again.');
@@ -143,6 +143,7 @@ const ShoppingList = () => {
       await toggleShoppingItem(id, checked);
     } catch (error) {
       console.error('Error toggling item:', error);
+      alert('Failed to update item. Please try again.');
     }
   };
 
@@ -157,125 +158,190 @@ const ShoppingList = () => {
     }
   };
 
-  // Filter items based on selected store, camp meal (Firestore field `salad`), and search query
-  const filteredItems = items.filter(item => {
-    // Store filter
-    const matchesStore = selectedStore === 'All' || item.store === selectedStore;
-    
-    // Camp meal filter (links to menu rows with type "salad"; field name remains `salad` for parity)
-    const matchesSalad = selectedSalad === 'All' || (item.salad || 'General') === selectedSalad;
-    
-    // Search filter - defensively handle missing or undefined names
-    const matchesSearch = searchQuery.trim() === '' || 
-      (item.name && typeof item.name === 'string' && 
-       item.name.toLowerCase().includes(searchQuery.toLowerCase().trim()));
-    
-    return matchesStore && matchesSalad && matchesSearch;
+  const filteredItems = items.filter((item) => {
+    const matchesStore =
+      selectedStore === 'All' || storeBucket(item) === selectedStore;
+
+    const mealKey = resolveNormalizedMealKey(item, menuItems);
+    const matchesMeal =
+      effectiveSelectedMeal === 'All' || mealKey === effectiveSelectedMeal;
+
+    const matchesSearch =
+      searchQuery.trim() === '' ||
+      (item.name &&
+        typeof item.name === 'string' &&
+        item.name.toLowerCase().includes(searchQuery.toLowerCase().trim()));
+
+    return matchesStore && matchesMeal && matchesSearch;
   });
+
+  const mealSections = useMemo(() => {
+    const map = new Map();
+    for (const item of filteredItems) {
+      const k = resolveNormalizedMealKey(item, menuItems);
+      if (!map.has(k)) map.set(k, []);
+      map.get(k).push(item);
+    }
+
+    const mealOrderIndex = (key) => {
+      if (key === UNASSIGNED_MEAL_VALUE) return 9999;
+      const i = mealOptions.findIndex((o) => o.value === key);
+      return i === -1 ? 5000 + String(key).charCodeAt(0) : i;
+    };
+
+    const keys = [...map.keys()].sort((a, b) => mealOrderIndex(a) - mealOrderIndex(b));
+
+    return keys.map((mealKey) => {
+      const title =
+        mealKey === UNASSIGNED_MEAL_VALUE
+          ? NO_MEAL_SECTION
+          : labelForMealKey(mealKey, menuItems);
+      return { mealKey, title, items: map.get(mealKey) };
+    });
+  }, [filteredItems, menuItems, mealOptions]);
+
+  const mealChipLabel = (mealKey) => {
+    if (mealKey === 'All') return 'All Meals';
+    if (mealKey === UNASSIGNED_MEAL_VALUE) return NO_MEAL_SECTION;
+    return labelForMealKey(mealKey, menuItems);
+  };
+
+  const emptySummary = () => {
+    if (searchQuery.trim()) {
+      return `No items found matching "${searchQuery}"`;
+    }
+    if (effectiveSelectedMeal !== 'All') {
+      const m = mealChipLabel(effectiveSelectedMeal);
+      if (selectedStore === 'All') {
+        return `No items tagged for ${m} yet`;
+      }
+      return `No items for ${m} at ${selectedStore} yet`;
+    }
+    if (selectedStore === 'All') {
+      return 'Your shopping list is empty';
+    }
+    return `No items for ${selectedStore} yet`;
+  };
 
   return (
     <div className="shopping-list-page">
       <Header />
       <main className="main-content">
         <div className="shopping-list-container">
-          {/* Store filter */}
-          <div className="store-filter">
+          <div
+            className="store-filter store-filter--retail"
+            role="toolbar"
+            aria-label="Filter by store"
+          >
             <button
+              type="button"
               className={`filter-button ${selectedStore === 'All' ? 'active' : ''}`}
               onClick={() => setSelectedStore('All')}
             >
-              All
+              All Stores
             </button>
-            {STORES.map(store => (
-              <button
-                key={store}
-                className={`filter-button ${selectedStore === store ? 'active' : ''}`}
-                onClick={() => setSelectedStore(store)}
-                style={{
-                  backgroundColor: selectedStore === store ? getStoreColor(store) : 'white',
-                  color: selectedStore === store ? 'white' : '#333',
-                  borderColor: getStoreColor(store)
-                }}
-              >
-                {store}
-              </button>
-            ))}
-          </div>
-
-          {/* Camp meal filter (menu type "salad" in Firestore) */}
-          {salads.length > 0 && (
-            <div className="salad-filter">
-              <button
-                className={`filter-button filter-button-salad ${selectedSalad === 'All' ? 'active' : ''}`}
-                onClick={() => setSelectedSalad('All')}
-              >
-                All meals
-              </button>
-              <button
-                className={`filter-button filter-button-salad ${selectedSalad === 'General' ? 'active' : ''}`}
-                onClick={() => setSelectedSalad('General')}
-                style={{
-                  backgroundColor: selectedSalad === 'General' ? '#c47f08' : 'white',
-                  color: selectedSalad === 'General' ? 'white' : '#333',
-                  borderColor: '#c47f08'
-                }}
-              >
-                General
-              </button>
-              {salads.map(salad => (
+            {STORES.map((store) => {
+              const active = selectedStore === store;
+              const color = getStoreColor(store);
+              return (
                 <button
-                  key={salad}
-                  className={`filter-button filter-button-salad ${selectedSalad === salad ? 'active' : ''}`}
-                  onClick={() => setSelectedSalad(salad)}
+                  type="button"
+                  key={store}
+                  className={`filter-button ${active ? 'active' : ''}`}
+                  onClick={() => setSelectedStore(store)}
                   style={{
-                    backgroundColor: selectedSalad === salad ? '#c47f08' : 'white',
-                    color: selectedSalad === salad ? 'white' : '#333',
-                    borderColor: '#c47f08'
+                    backgroundColor: active ? color : 'white',
+                    color: active ? '#fff' : '#333',
+                    borderColor: color,
+                    borderWidth: 2,
                   }}
                 >
-                  {salad}
+                  {store}
                 </button>
-              ))}
-            </div>
-          )}
-          
-          {/* Search field */}
+              );
+            })}
+          </div>
+
+          <div
+            className="meal-filter meal-filter--chips"
+            role="toolbar"
+            aria-label="Filter by camp meal"
+          >
+            <button
+              type="button"
+              className={`filter-button ${effectiveSelectedMeal === 'All' ? 'active' : ''}`}
+              onClick={() => setSelectedMeal('All')}
+            >
+              All Meals
+            </button>
+            {campMealOptions.map((opt) => {
+              const active = effectiveSelectedMeal === opt.value;
+              const color = getMealColor(opt.value);
+              return (
+                <button
+                  type="button"
+                  key={opt.value}
+                  className={`filter-button ${active ? 'active' : ''}`}
+                  onClick={() => setSelectedMeal(opt.value)}
+                  style={{
+                    backgroundColor: active ? color : 'white',
+                    color: active ? '#fff' : '#333',
+                    borderColor: color,
+                    borderWidth: 2,
+                  }}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+
           <SearchField
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Search items..."
           />
-          
-          {/* Add form at the top */}
-          <InlineAddRow
-            onSave={handleAddItem}
-          />
-          <div className="shopping-list-table">
-            <div className="table-body">
-              {filteredItems.length === 0 ? (
-                <div className="empty-message">
-                  {searchQuery.trim() 
-                    ? `No items found matching "${searchQuery}"`
-                    : selectedStore === 'All' && selectedSalad === 'All'
-                      ? 'No items in your shopping list yet' 
-                      : selectedStore !== 'All' && selectedSalad === 'All'
-                        ? `No items for ${selectedStore} yet`
-                        : selectedStore === 'All' && selectedSalad !== 'All'
-                          ? `No items for ${selectedSalad} yet`
-                          : `No items for ${selectedStore} - ${selectedSalad} yet`}
-                </div>
-              ) : (
-                filteredItems.map((item) => (
-                  <EditableShoppingRow
-                    key={item.id}
-                    item={item}
-                    onToggle={handleToggleItem}
-                    onDelete={handleDeleteItem}
-                    onSave={handleUpdateItem}
+
+          <InlineAddRow onSave={handleAddItem} campMealOptions={campMealOptions} />
+
+          <div className="shopping-list-fill">
+            {filteredItems.length === 0 ? (
+              <div className="shopping-list-empty" role="status">
+                <div className="shopping-list-empty__card">
+                  <img
+                    className="shopping-list-empty__icon"
+                    src="/camp-icon.svg"
+                    alt=""
+                    width={56}
+                    height={56}
                   />
-                ))
-              )}
-            </div>
+                  <p className="shopping-list-empty__message">{emptySummary()}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="shopping-list-table">
+                <div className="table-body">
+                  {mealSections.map(({ mealKey, title, items: sectionItems }) => (
+                    <section key={mealKey} className="meal-section">
+                      <h3 className="meal-section__title">{title}</h3>
+                      <div className="meal-section__rows">
+                        {sectionItems.map((item) => (
+                          <EditableShoppingRow
+                            key={item.id}
+                            item={item}
+                            menuItems={menuItems}
+                            hideMealBadge
+                            onToggle={handleToggleItem}
+                            onDelete={handleDeleteItem}
+                            onSave={handleUpdateItem}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -285,4 +351,3 @@ const ShoppingList = () => {
 };
 
 export default ShoppingList;
-

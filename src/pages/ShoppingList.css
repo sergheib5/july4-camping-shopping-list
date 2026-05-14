@@ -8,6 +8,9 @@
 
 .main-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   padding: 20px;
   max-width: 1200px;
   width: 100%;
@@ -19,10 +22,60 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.shopping-list-fill {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.shopping-list-fill:has(.shopping-list-empty) {
+  min-height: min(44vh, 380px);
+}
+
+.shopping-list-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 8px 32px;
+}
+
+.shopping-list-empty__card {
+  text-align: center;
+  max-width: 340px;
+  padding: 28px 22px 30px;
+  border-radius: 20px;
+  background: rgba(253, 250, 243, 0.42);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  box-shadow:
+    0 12px 40px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.shopping-list-empty__icon {
+  display: block;
+  margin: 0 auto 16px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+}
+
+.shopping-list-empty__message {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-navy, #0f172a);
 }
 
 .store-filter,
-.salad-filter {
+.meal-filter {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -30,6 +83,12 @@
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.meal-filter--chips {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .filter-button {
@@ -61,17 +120,39 @@
   border-color: #333;
 }
 
-.salad-filter .filter-button:first-child.active {
+.meal-filter .filter-button:first-child.active {
   background: #333;
   color: white;
   border-color: #333;
 }
 
-.empty-message {
-  padding: 40px 20px;
-  text-align: center;
-  color: #666;
-  font-size: 16px;
+.store-filter--retail .filter-button:not(:first-child):not(.active) {
+  background: #fff;
+}
+
+.meal-section {
+  border-bottom: 1px solid #eee;
+}
+
+.meal-section:last-child {
+  border-bottom: none;
+}
+
+.meal-section__title {
+  margin: 0;
+  padding: 12px 20px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #555;
+  background: #fafbfc;
+  border-bottom: 1px solid #eceff1;
+}
+
+.meal-section__rows {
+  display: flex;
+  flex-direction: column;
 }
 
 
@@ -101,7 +182,7 @@
   }
 
   .store-filter,
-  .salad-filter {
+  .meal-filter {
     padding: 8px;
     gap: 6px;
   }

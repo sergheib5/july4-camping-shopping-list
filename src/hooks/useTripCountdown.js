@@ -1,5 +1,36 @@
 import { useState, useEffect, useMemo } from 'react';
 
+const DEFAULT_TRIP_START_DATE = '2026-07-02';
+/** When env is date-only (YYYY-MM-DD), trip begins at this local time. */
+const DEFAULT_TRIP_START_HOUR = 17;
+
+/**
+ * Trip departure / meetup time in the viewer's local timezone.
+ * - `YYYY-MM-DD` → that calendar day at 5:00 PM local (default hour).
+ * - `YYYY-MM-DDTHH:mm` or `YYYY-MM-DDTHH:mm:ss` → explicit local time (suffix after T is split at Z/+/- for naive local parse).
+ */
+function parseLocalTripStart(iso) {
+  const raw = (iso || DEFAULT_TRIP_START_DATE).trim();
+  const [datePart, timePartRaw] = raw.split('T');
+  const parts = datePart.split('-').map(Number);
+  if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime())
+      ? new Date(2026, 6, 2, DEFAULT_TRIP_START_HOUR, 0, 0, 0)
+      : d;
+  }
+  const [y, m, d] = parts;
+  if (timePartRaw) {
+    const timePart = timePartRaw.split(/[Z+-]/)[0];
+    const [hh = DEFAULT_TRIP_START_HOUR, mm = 0, ss = 0] = timePart.split(':').map((x) => Number(x));
+    const hour = Number.isFinite(hh) ? hh : DEFAULT_TRIP_START_HOUR;
+    const minute = Number.isFinite(mm) ? mm : 0;
+    const second = Number.isFinite(ss) ? Math.floor(ss) : 0;
+    return new Date(y, m - 1, d, hour, minute, second, 0);
+  }
+  return new Date(y, m - 1, d, DEFAULT_TRIP_START_HOUR, 0, 0, 0);
+}
+
 /**
  * Parse YYYY-MM-DD (or ISO datetime) into local start-of-day.
  */
@@ -99,7 +130,7 @@ export function useTripCountdown() {
   const tripStartIso = import.meta.env.VITE_TRIP_START;
   const tripEndIso = import.meta.env.VITE_TRIP_END;
 
-  const tripStart = useMemo(() => parseLocalDayStart(tripStartIso || '2026-07-02'), [tripStartIso]);
+  const tripStart = useMemo(() => parseLocalTripStart(tripStartIso || DEFAULT_TRIP_START_DATE), [tripStartIso]);
   const tripEndInclusive = useMemo(
     () => parseLocalDayEndInclusive(tripEndIso || '2026-07-05'),
     [tripEndIso],
@@ -130,7 +161,7 @@ export function useTripCountdown() {
     nightCaption,
     tripStart,
     tripEndInclusive,
-    tripStartIso: tripStartIso || '2026-07-02',
+    tripStartIso: tripStartIso || DEFAULT_TRIP_START_DATE,
     tripEndIso: tripEndIso || '2026-07-05',
     display: {
       days: pad2(days),

@@ -1,40 +1,65 @@
-import { useState, useRef, useEffect } from 'react';
-import { STORES, getStoreColor, AUTO_SAVE_DEBOUNCE_MS, CLICK_OUTSIDE_DELAY_MS, DEFAULT_STORE } from '../utils/constants';
-import useSalads from '../hooks/useSalads';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import {
+  STORES,
+  DEFAULT_STORE,
+  AUTO_SAVE_DEBOUNCE_MS,
+  CLICK_OUTSIDE_DELAY_MS,
+  getStoreColor,
+} from '../utils/constants';
+import {
+  resolveNormalizedMealKey,
+  labelForMealKey,
+  UNASSIGNED_MEAL_VALUE,
+  buildCampMealAssignmentOptions,
+} from '../utils/menuMeals';
 import './EditableShoppingRow.css';
 
-const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
-  const salads = useSalads();
+const mealSelectValue = (item, menuItems) => {
+  const k = resolveNormalizedMealKey(item, menuItems);
+  return k === UNASSIGNED_MEAL_VALUE ? UNASSIGNED_MEAL_VALUE : k;
+};
+
+const EditableShoppingRow = ({
+  item,
+  menuItems,
+  hideMealBadge = false,
+  onToggle,
+  onDelete,
+  onSave,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     name: item.name || '',
     store: item.store || DEFAULT_STORE,
-    salad: item.salad || 'General',
+    salad: mealSelectValue(item, menuItems),
     quantity: item.quantity || '',
-    notes: item.notes || ''
+    notes: item.notes || '',
   });
   const nameInputRef = useRef(null);
   const rowRef = useRef(null);
   const editDataRef = useRef(editData);
   const saveTimeoutRef = useRef(null);
 
-  // Keep ref in sync with state
   useEffect(() => {
     editDataRef.current = editData;
   }, [editData]);
 
-  // Sync editData when item changes (when not editing)
+  const assignmentOptions = useMemo(
+    () => buildCampMealAssignmentOptions(menuItems, editData.salad),
+    [menuItems, editData.salad],
+  );
+
   useEffect(() => {
     if (!isEditing) {
       setEditData({
         name: item.name || '',
         store: item.store || DEFAULT_STORE,
-        salad: item.salad || 'General',
+        salad: mealSelectValue(item, menuItems),
         quantity: item.quantity || '',
-        notes: item.notes || ''
+        notes: item.notes || '',
       });
     }
-  }, [item, isEditing]);
+  }, [item, menuItems, isEditing]);
 
   useEffect(() => {
     if (isEditing && nameInputRef.current) {
@@ -54,9 +79,9 @@ const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
       setEditData({
         name: item.name || '',
         store: item.store || DEFAULT_STORE,
-        salad: item.salad || 'General',
+        salad: mealSelectValue(item, menuItems),
         quantity: item.quantity || '',
-        notes: item.notes || ''
+        notes: item.notes || '',
       });
     }
   };
@@ -69,11 +94,10 @@ const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
   const handleChange = (field, value) => {
     const newEditData = {
       ...editData,
-      [field]: value
+      [field]: value,
     };
     setEditData(newEditData);
-    
-    // Auto-save with debounce
+
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
@@ -82,40 +106,50 @@ const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
     }, AUTO_SAVE_DEBOUNCE_MS);
   };
 
-  const handleBlur = async () => {
-    // Clear any pending save and save immediately
+  const persistEdit = useCallback(async () => {
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
     }
-    // Use ref to get latest state
     await onSave(item.id, editDataRef.current);
+  }, [item.id, onSave]);
+
+  const handleBlur = () => {
+    void persistEdit();
   };
 
   const handleCancel = () => {
-    // Clear any pending saves
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
     }
     setEditData({
       name: item.name || '',
       store: item.store || DEFAULT_STORE,
-      salad: item.salad || 'General',
+      salad: mealSelectValue(item, menuItems),
       quantity: item.quantity || '',
-      notes: item.notes || ''
+      notes: item.notes || '',
     });
     setIsEditing(false);
   };
 
-  // Handle click outside to cancel editing
+  const flushSaveAndClose = useCallback(async () => {
+    try {
+      await persistEdit();
+      setIsEditing(false);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [persistEdit]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isEditing && rowRef.current && !rowRef.current.contains(event.target)) {
-        handleCancel();
+        void flushSaveAndClose();
       }
     };
 
     if (isEditing) {
-      // Use a small timeout to avoid canceling when clicking to focus an input
       const timeoutId = setTimeout(() => {
         document.addEventListener('mousedown', handleClickOutside);
       }, CLICK_OUTSIDE_DELAY_MS);
@@ -125,7 +159,7 @@ const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [isEditing]);
+  }, [isEditing, flushSaveAndClose]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
@@ -133,11 +167,18 @@ const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
     }
   };
 
+  const badgeLabel = labelForMealKey(
+    resolveNormalizedMealKey(item, menuItems),
+    menuItems,
+  );
+
+  const storeLabel = (item.store ?? '').trim() || DEFAULT_STORE;
+
   if (isEditing) {
     return (
-      <div 
+      <div
         ref={rowRef}
-        className="shopping-item-row editing" 
+        className="shopping-item-row editing"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="col-checkbox">
@@ -167,9 +208,12 @@ const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             className="inline-select"
+            aria-label="Store lane"
           >
-            {STORES.map(store => (
-              <option key={store} value={store}>{store}</option>
+            {STORES.map((store) => (
+              <option key={store} value={store}>
+                {store}
+              </option>
             ))}
           </select>
         </div>
@@ -180,10 +224,13 @@ const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             className="inline-select"
+            aria-label="Menu meal"
           >
-            <option value="General">General</option>
-            {salads.map(salad => (
-              <option key={salad} value={salad}>{salad}</option>
+            <option value={UNASSIGNED_MEAL_VALUE}>Unassigned</option>
+            {assignmentOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
           </select>
         </div>
@@ -222,9 +269,9 @@ const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
   }
 
   return (
-    <div 
+    <div
       ref={rowRef}
-      className={`shopping-item-row ${item.checked ? 'checked' : ''}`}
+      className={`shopping-item-row ${item.checked ? 'checked' : ''} ${hideMealBadge ? 'shopping-item-row--meal-grouped' : ''}`}
       onClick={handleRowClick}
     >
       <div className="col-checkbox" onClick={(e) => e.stopPropagation()}>
@@ -240,13 +287,20 @@ const EditableShoppingRow = ({ item, onToggle, onDelete, onSave }) => {
           {item.name || 'Unnamed Item'}
         </span>
       </div>
-      <div className="col-store col-store-hidden">
-        {/* Store badge hidden in display mode - filtering available at top */}
-      </div>
-      <div className="col-salad">
-        <span className="salad-badge">
-          {item.salad || 'General'}
+      <div className="col-store">
+        <span
+          className="store-badge"
+          style={{ backgroundColor: getStoreColor(item.store) }}
+          title={!STORES.includes(storeLabel) ? storeLabel : undefined}
+        >
+          {storeLabel}
         </span>
+      </div>
+      <div
+        className={`col-salad ${hideMealBadge ? 'col-salad--hidden' : ''}`}
+        aria-hidden={hideMealBadge || undefined}
+      >
+        {!hideMealBadge ? <span className="salad-badge">{badgeLabel}</span> : null}
       </div>
       <div className="col-quantity">
         <span>{item.quantity || '-'}</span>

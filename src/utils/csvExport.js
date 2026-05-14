@@ -3,6 +3,8 @@
  * Converts data arrays to CSV format and triggers download
  */
 
+import { resolveNormalizedMealKey, labelForMealKey } from './menuMeals';
+
 /**
  * Escapes a field value for CSV format
  * Handles commas, quotes, and newlines
@@ -74,24 +76,30 @@ const downloadCSV = (csvContent, filename) => {
 /**
  * Exports shopping list items to CSV
  */
-export const exportShoppingListToCSV = (items) => {
+export const exportShoppingListToCSV = (items, menuItems = []) => {
   if (!items || items.length === 0) {
     alert('No shopping list items to export');
     return;
   }
-  
-  // Define headers for shopping list
-  const headers = ['Name', 'Store', 'Quantity', 'Notes', 'Checked', 'Created At'];
-  
-  // Map items to CSV format
-  const csvData = items.map(item => ({
-    'Name': item.name || '',
-    'Store': item.store || '',
-    'Quantity': item.quantity || '',
-    'Notes': item.notes || '',
-    'Checked': item.checked ? 'Yes' : 'No',
-    'Created At': item.createdAt ? (item.createdAt.toDate ? item.createdAt.toDate().toISOString() : new Date(item.createdAt).toISOString()) : ''
-  }));
+
+  const headers = ['Name', 'Store', 'Menu meal', 'Quantity', 'Notes', 'Checked', 'Created At'];
+
+  const csvData = items.map((item) => {
+    const mealKey = resolveNormalizedMealKey(item, menuItems);
+    return {
+      Name: item.name || '',
+      Store: item.store || '',
+      'Menu meal': labelForMealKey(mealKey, menuItems),
+      Quantity: item.quantity || '',
+      Notes: item.notes || '',
+      Checked: item.checked ? 'Yes' : 'No',
+      'Created At': item.createdAt
+        ? item.createdAt.toDate
+          ? item.createdAt.toDate().toISOString()
+          : new Date(item.createdAt).toISOString()
+        : '',
+    };
+  });
   
   const csvContent = arrayToCSV(csvData, headers);
   const timestamp = new Date().toISOString().split('T')[0];
@@ -144,7 +152,7 @@ export const exportAllDataToCSV = async (getAllShoppingListItems, getAllMenuItem
     
     // Export shopping list first
     if (shoppingItems && shoppingItems.length > 0) {
-      exportShoppingListToCSV(shoppingItems);
+      exportShoppingListToCSV(shoppingItems, menuItems);
     }
     
     // Small delay to avoid browser download conflicts

@@ -7,7 +7,7 @@ describe('ShoppingItemRow', () => {
   const mockItem = {
     id: '1',
     name: 'Test Item',
-    store: 'Cooler & drinks',
+    store: 'Costco',
     quantity: '2 lbs',
     notes: 'Test notes',
     checked: false
@@ -44,7 +44,7 @@ describe('ShoppingItemRow', () => {
       />
     );
 
-    expect(screen.getByText('Cooler & drinks')).toBeInTheDocument();
+    expect(screen.getByText('Costco')).toBeInTheDocument();
   });
 
   it('should render quantity', () => {

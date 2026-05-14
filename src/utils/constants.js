@@ -1,6 +1,22 @@
-// Shared constants across the application — camping / July 4 trip packing
+// Timing constants shared by shopping row editors
+export const AUTO_SAVE_DEBOUNCE_MS = 500;
+export const CLICK_OUTSIDE_DELAY_MS = 100;
 
-export const STORES = [
+/** Retail runs (top chips). Replaces obsolete packing-lane names in older Firestore rows. */
+export const STORES = ['Fresh Farm', 'Aldi', 'Costco', "Binny's", 'Other'];
+
+export const DEFAULT_STORE = STORES[0];
+
+const STORE_COLORS = {
+  'Fresh Farm': '#2e7d32',
+  Aldi: '#1565c0',
+  Costco: '#c62828',
+  "Binny's": '#212121',
+  Other: '#9e9e9e',
+};
+
+/** Obsolete packing-lane labels from earlier seeds — map to retail `Other`. */
+const LEGACY_PACKING_LANES = new Set([
   'Cooler & drinks',
   'Grill & foil',
   'Snacks',
@@ -8,42 +24,28 @@ export const STORES = [
   'Safety & bugs',
   'Lighting',
   'Trash & recycling',
-  'Other',
-];
+]);
 
-export const DEFAULT_STORE = STORES[0];
-
-export const getStoreColor = (store) => {
-  const storeColors = {
-    'Cooler & drinks': '#1e88e5',
-    'Grill & foil': '#c62828',
-    Snacks: '#f9a825',
-    Breakfast: '#fbc02d',
-    'Safety & bugs': '#2e7d32',
-    Lighting: '#6a1b9a',
-    'Trash & recycling': '#546e7a',
-    Other: '#78909c',
-  };
-  return storeColors[store] || storeColors.Other;
+export const normalizeRetailStore = (store) => {
+  if (store == null || store === '') return 'Other';
+  if (STORES.includes(store)) return store;
+  if (LEGACY_PACKING_LANES.has(store)) return 'Other';
+  return 'Other';
 };
 
-// Auto-save debounce time in milliseconds
-export const AUTO_SAVE_DEBOUNCE_MS = 500;
+export const getStoreColor = (store) => {
+  const key = normalizeRetailStore(store);
+  return STORE_COLORS[key] || STORE_COLORS.Other;
+};
 
-// Click outside handler delay in milliseconds
-export const CLICK_OUTSIDE_DELAY_MS = 100;
-
-// Get abbreviated store name for mobile display
 export const getStoreAbbreviation = (store) => {
+  const s = normalizeRetailStore(store);
   const abbreviations = {
-    'Cooler & drinks': 'Cooler',
-    'Grill & foil': 'Grill',
-    Snacks: 'Snack',
-    Breakfast: 'Bfast',
-    'Safety & bugs': 'Safe',
-    Lighting: 'Light',
-    'Trash & recycling': 'Trash',
+    'Fresh Farm': 'FF',
+    Aldi: 'Aldi',
+    Costco: 'Costco',
+    "Binny's": "Binny's",
     Other: 'Other',
   };
-  return abbreviations[store] || store;
+  return abbreviations[s] || s;
 };

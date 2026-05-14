@@ -1,16 +1,50 @@
 .app-header {
-  background: linear-gradient(120deg, #0b1220 0%, #152238 45%, #1c2f4d 100%);
+  position: sticky;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #0b1220;
   color: var(--color-cream, #f4f1e8);
   padding: 8px 20px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-  position: sticky;
   top: 0;
   z-index: 100;
   border-bottom: 1px solid rgba(240, 180, 41, 0.25);
+  /* Thin strip: ~half the previous tall banner; content sets practical height. */
+  min-height: clamp(56px, 11vw, 84px);
+}
+
+.app-header__hero {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.app-header__hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center center;
+}
+
+.app-header__hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    120deg,
+    rgba(11, 18, 32, 0.45) 0%,
+    rgba(11, 18, 32, 0.25) 50%,
+    rgba(11, 18, 32, 0.42) 100%
+  );
 }
 
 .header-content {
+  position: relative;
+  z-index: 2;
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
   flex-wrap: nowrap;
@@ -27,37 +61,100 @@
   color: var(--color-cream, #f4f1e8);
 }
 
-.export-button {
-  background: rgba(240, 180, 41, 0.12);
-  border: 1px solid rgba(240, 180, 41, 0.45);
-  color: var(--color-cream, #f4f1e8);
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: 500;
-  transition: all 0.2s ease;
+.header-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-width: 36px;
-  height: 36px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
-.export-button:hover:not(:disabled) {
-  background: rgba(240, 180, 41, 0.22);
-  border-color: rgba(240, 180, 41, 0.65);
+.header-toolbar-button {
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-decoration: none;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.header-toolbar-button--directions {
+  background: #1a5fb4;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 6px 12px;
+  min-height: 36px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.header-toolbar-button--directions:hover {
+  background: #2563eb;
+  border-color: rgba(255, 255, 255, 0.35);
   transform: translateY(-1px);
 }
 
-.export-button:active:not(:disabled) {
+.header-toolbar-button--directions:active {
+  background: #1746a0;
   transform: translateY(0);
 }
 
-.export-button:disabled {
-  opacity: 0.6;
+.header-toolbar-button--directions:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.header-toolbar-button--export {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: rgba(244, 241, 232, 0.82);
+  padding: 6px 8px;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.header-toolbar-button--export:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: var(--color-cream, #f4f1e8);
+}
+
+.header-toolbar-button--export:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.header-toolbar-button--export:disabled {
+  opacity: 0.55;
   cursor: not-allowed;
+}
+
+.header-export-icon {
+  display: block;
+  opacity: 0.92;
+}
+
+.header-export-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(244, 241, 232, 0.2);
+  border-top-color: rgba(244, 241, 232, 0.75);
+  border-radius: 50%;
+  animation: header-export-spin 0.65s linear infinite;
+}
+
+@keyframes header-export-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {
@@ -69,11 +166,25 @@
     gap: 8px;
   }
 
-  .export-button {
-    padding: 5px 8px;
-    font-size: 16px;
+  .header-actions {
+    gap: 6px;
+  }
+
+  .header-toolbar-button--directions {
+    padding: 5px 10px;
+    min-height: 32px;
+    font-size: 12px;
+  }
+
+  .header-toolbar-button--export {
+    padding: 5px 7px;
     min-width: 32px;
-    height: 32px;
+    min-height: 32px;
+  }
+
+  .header-export-icon {
+    width: 16px;
+    height: 16px;
   }
 }
 
@@ -86,10 +197,20 @@
     gap: 6px;
   }
 
-  .export-button {
+  .header-toolbar-button--directions {
+    padding: 4px 8px;
+    min-height: 28px;
+    font-size: 11px;
+  }
+
+  .header-toolbar-button--export {
     padding: 4px 6px;
-    font-size: 14px;
     min-width: 28px;
-    height: 28px;
+    min-height: 28px;
+  }
+
+  .header-export-icon {
+    width: 15px;
+    height: 15px;
   }
 }

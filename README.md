@@ -1,10 +1,10 @@
 # July 4 weekend campout — shopping list & cook plan
 
-Standalone **Vite + React + Firebase Firestore** PWA for an **Independence Day weekend campout** (default trip window **July 2–5, 2026**). Same data model as the reference [`sergheib5/shopping-list`](https://github.com/sergheib5/shopping-list): collections **`shoppingList`** and **`menu`**, menu “cookout” rows still use Firestore `type: 'salad'` and shopping rows use the **`salad`** field to link items to a meal name.
+Standalone **Vite + React + Firebase Firestore** PWA for an **Independence Day weekend campout** (default trip window **July 2–5, 2026**). Same data model as the reference [`sergheib5/shopping-list`](https://github.com/sergheib5/shopping-list): collections **`shoppingList`** and **`menu`**, menu “cookout” rows still use Firestore `type: 'salad'`, shopping rows use **`store`** for the retail run (Fresh Farm, Aldi, Costco, Binny's, Other) and **`salad`** for the menu meal key (menu id, `docId|lunch` / `docId|dinner` for daily rows, or legacy camp-meal name).
 
 ## Features
 
-- Shopping list with store lanes, camp-meal filters, search, inline add, CSV export  
+- Shopping list: **retail store** chips (Fresh Farm, Aldi, Costco, Binny's, Other), items **grouped by menu meal** under the selected store, search, inline add, CSV export  
 - Meals page: daily cook plan, camp meals, snacks, drinks  
 - Bottom navigation, PWA manifest + service worker  
 - Trip header states (**before / on / after**) from `VITE_TRIP_START` and `VITE_TRIP_END`

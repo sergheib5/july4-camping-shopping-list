@@ -10,7 +10,7 @@ const BottomNav = () => {
         to="/" 
         className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}
       >
-        <span className="nav-icon">🛒</span>
+        <span className="nav-icon" aria-hidden="true">⛺</span>
         <span className="nav-label">Shopping</span>
       </Link>
       <Link 

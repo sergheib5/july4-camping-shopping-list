@@ -1,33 +1,28 @@
 import { useState, useRef, useEffect } from 'react';
 import { STORES, DEFAULT_STORE } from '../utils/constants';
-import useSalads from '../hooks/useSalads';
+import { UNASSIGNED_MEAL_VALUE } from '../utils/menuMeals';
 import './InlineAddRow.css';
 
-const InlineAddRow = ({ onSave }) => {
-  const salads = useSalads();
+const InlineAddRow = ({ onSave, campMealOptions = [] }) => {
   const [formData, setFormData] = useState({
     name: '',
     store: DEFAULT_STORE,
-    salad: 'General',
-    quantity: ''
+    salad: UNASSIGNED_MEAL_VALUE,
+    quantity: '',
   });
 
   const nameInputRef = useRef(null);
   const formRef = useRef(null);
 
   useEffect(() => {
-    // Focus on item name input when component mounts
     if (nameInputRef.current) {
       nameInputRef.current.focus();
     }
   }, []);
 
-  // Keep focus on name input for continuous flow
   useEffect(() => {
-    // Focus on name input when form is empty (after saving)
     const isEmpty = !formData.name.trim() && !formData.quantity.trim();
     if (isEmpty && nameInputRef.current) {
-      // Small delay to ensure DOM is ready
       const timeoutId = setTimeout(() => {
         if (nameInputRef.current) {
           nameInputRef.current.focus();
@@ -38,9 +33,9 @@ const InlineAddRow = ({ onSave }) => {
   }, [formData.name, formData.quantity, formData.salad]);
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -48,14 +43,12 @@ const InlineAddRow = ({ onSave }) => {
     e.preventDefault();
     if (formData.name.trim()) {
       onSave(formData);
-      // Reset form for next item
       setFormData({
         name: '',
         store: DEFAULT_STORE,
-        salad: 'General',
-        quantity: ''
+        salad: UNASSIGNED_MEAL_VALUE,
+        quantity: '',
       });
-      // Focus back on name input immediately for continuous flow
       setTimeout(() => {
         if (nameInputRef.current) {
           nameInputRef.current.focus();
@@ -69,21 +62,17 @@ const InlineAddRow = ({ onSave }) => {
       e.preventDefault();
       if (formData.name.trim()) {
         handleSubmit(e);
-      } else {
-        // If name is empty, just focus on name input
-        if (nameInputRef.current) {
-          nameInputRef.current.focus();
-        }
+      } else if (nameInputRef.current) {
+        nameInputRef.current.focus();
       }
     }
     if (e.key === 'Escape') {
-      // Clear form if it has content
       if (formData.name.trim() || formData.quantity.trim()) {
         setFormData({
           name: '',
           store: DEFAULT_STORE,
-          salad: 'General',
-          quantity: ''
+          salad: UNASSIGNED_MEAL_VALUE,
+          quantity: '',
         });
         if (nameInputRef.current) {
           nameInputRef.current.focus();
@@ -122,10 +111,12 @@ const InlineAddRow = ({ onSave }) => {
           onChange={(e) => handleChange('store', e.target.value)}
           className="inline-select"
           onKeyDown={handleKeyDown}
-          title={formData.store}
+          aria-label="Store lane"
         >
-          {STORES.map(store => (
-            <option key={store} value={store}>{store}</option>
+          {STORES.map((store) => (
+            <option key={store} value={store}>
+              {store}
+            </option>
           ))}
         </select>
       </div>
@@ -135,11 +126,13 @@ const InlineAddRow = ({ onSave }) => {
           onChange={(e) => handleChange('salad', e.target.value)}
           className="inline-select"
           onKeyDown={handleKeyDown}
-          title={formData.salad}
+          aria-label="Menu meal"
         >
-          <option value="General">General</option>
-          {salads.map(salad => (
-            <option key={salad} value={salad}>{salad}</option>
+          <option value={UNASSIGNED_MEAL_VALUE}>Unassigned</option>
+          {campMealOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
           ))}
         </select>
       </div>

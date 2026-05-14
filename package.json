@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "vercel:sync-env": "node scripts/sync-env-to-vercel.mjs",
     "populate-data": "node scripts/populate-data.js",
     "test": "vitest",
     "test:ui": "vitest --ui",

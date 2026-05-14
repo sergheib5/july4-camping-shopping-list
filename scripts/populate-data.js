@@ -4,7 +4,8 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-// Load environment variables from .env file
+/* eslint-disable no-undef -- Node script; ESLint env not configured for scripts */
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const envPath = join(__dirname, '..', '.env');
@@ -12,7 +13,7 @@ const envPath = join(__dirname, '..', '.env');
 let envVars = {};
 try {
   const envFile = readFileSync(envPath, 'utf-8');
-  envFile.split('\n').forEach(line => {
+  envFile.split('\n').forEach((line) => {
     const match = line.match(/^([^=:#]+)=(.*)$/);
     if (match) {
       const key = match[1].trim();
@@ -20,57 +21,30 @@ try {
       envVars[key] = value;
     }
   });
-} catch (error) {
+} catch {
   console.warn('Warning: Could not read .env file, using process.env');
 }
 
-// Use env file values or fall back to process.env
 const getEnv = (key) => envVars[key] || process.env[key];
 
-// Firebase configuration
 const firebaseConfig = {
   apiKey: getEnv('VITE_FIREBASE_API_KEY'),
   authDomain: getEnv('VITE_FIREBASE_AUTH_DOMAIN'),
   projectId: getEnv('VITE_FIREBASE_PROJECT_ID'),
   storageBucket: getEnv('VITE_FIREBASE_STORAGE_BUCKET'),
   messagingSenderId: getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-  appId: getEnv('VITE_FIREBASE_APP_ID')
+  appId: getEnv('VITE_FIREBASE_APP_ID'),
 };
 
-// Validate configuration
 if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'your-api-key') {
   console.error('❌ Error: Firebase configuration not found in .env file');
-  console.error('Please make sure your .env file contains all VITE_FIREBASE_* variables');
   process.exit(1);
 }
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Example packing list — July 4 weekend campout (tune before running)
-const shoppingListItems = [
-  { name: 'Ice / block ice', store: 'Cooler & drinks', quantity: '2 bags', notes: '' },
-  { name: 'Water jugs', store: 'Cooler & drinks', quantity: '3 gal', notes: '' },
-  { name: 'Sparkling water', store: 'Cooler & drinks', quantity: '12 pk', notes: '' },
-  { name: 'Propane (extra)', store: 'Grill & foil', quantity: '2', notes: '' },
-  { name: 'Heavy-duty foil', store: 'Grill & foil', quantity: '2 rolls', notes: '' },
-  { name: 'Burger patties', store: 'Grill & foil', quantity: '2 lb', notes: '' },
-  { name: 'Trail mix', store: 'Snacks', quantity: '1 large', notes: '' },
-  { name: 'S\'mores kit', store: 'Snacks', quantity: '1', notes: 'graham, marshmallow, chocolate' },
-  { name: 'Eggs', store: 'Breakfast', quantity: '18', notes: '' },
-  { name: 'Coffee + filters', store: 'Breakfast', quantity: '', notes: '' },
-  { name: 'Bug spray', store: 'Safety & bugs', quantity: '2 cans', notes: '' },
-  { name: 'Sunscreen SPF 50', store: 'Safety & bugs', quantity: '1', notes: '' },
-  { name: 'First aid kit', store: 'Safety & bugs', quantity: '1', notes: 'restock bandages' },
-  { name: 'Headlamps + batteries', store: 'Lighting', quantity: '4', notes: 'LED only' },
-  { name: 'Lantern (battery)', store: 'Lighting', quantity: '1', notes: '' },
-  { name: 'Trash bags (heavy)', store: 'Trash & recycling', quantity: '1 box', notes: '' },
-  { name: 'Recycling bags', store: 'Trash & recycling', quantity: '1 roll', notes: '' },
-];
-
-// Menu seed — `type: 'salad'` is the cookout / camp meal lane (Firestore parity with reference app)
-const menuItems = [
+const menuSeeds = [
   { type: 'daily', date: 'July 2', lunch: 'Sandwiches on the road', dinner: 'Hot dogs + sides' },
   { type: 'daily', date: 'July 3', lunch: 'Tacos', dinner: 'Foil-pack chicken + veg' },
   { type: 'daily', date: 'July 4', lunch: 'Burgers + corn', dinner: 'Dutch-oven chili + cobbler' },
@@ -87,33 +61,75 @@ const menuItems = [
   { type: 'drink', name: 'Coffee bar (cream + sugar)' },
 ];
 
+function buildShoppingSeeds(menu) {
+  const find = (type, pred) => menu.find((m) => m.type === type && pred(m));
+  const j4 = find('daily', (m) => m.date === 'July 4');
+  const j3 = find('daily', (m) => m.date === 'July 3');
+  const j2 = find('daily', (m) => m.date === 'July 2');
+  const pasta = find('salad', (m) => m.name === 'Pasta salad (pesto)');
+  const green = find('salad', (m) => m.name === 'Big green salad + vinaigrette');
+  const melon = find('salad', (m) => m.name === 'Watermelon + feta');
+  const chips = find('snack', (m) => m.name === 'Chips + salsa');
+  const pickles = find('snack', (m) => m.name === 'Pickles + olives board');
+  const lemonade = find('drink', (m) => m.name === 'Lemonade mix + iced tea');
+  const coffeeBar = find('drink', (m) => m.name === 'Coffee bar (cream + sugar)');
+
+  const L = (daily, slot) => `${daily.id}|${slot}`;
+
+  return [
+    { name: 'Ice / block ice', store: 'Costco', salad: 'General', quantity: '2 bags', notes: '' },
+    { name: 'Water jugs', store: 'Aldi', salad: 'General', quantity: '3 gal', notes: '' },
+    { name: 'Sparkling water', store: 'Costco', salad: lemonade.id, quantity: '12 pk', notes: '' },
+    { name: 'Propane (extra)', store: 'Costco', salad: L(j4, 'dinner'), quantity: '2', notes: '' },
+    { name: 'Heavy-duty foil', store: 'Aldi', salad: L(j3, 'dinner'), quantity: '2 rolls', notes: '' },
+    { name: 'Burger patties', store: 'Fresh Farm', salad: L(j4, 'lunch'), quantity: '2 lb', notes: '' },
+    { name: 'Trail mix', store: "Binny's", salad: chips.id, quantity: '1 large', notes: '' },
+    { name: "S'mores kit", store: 'Costco', salad: L(j2, 'dinner'), quantity: '1', notes: 'graham, marshmallow, chocolate' },
+    { name: 'Eggs', store: 'Fresh Farm', salad: L(j3, 'lunch'), quantity: '18', notes: '' },
+    { name: 'Coffee + filters', store: 'Aldi', salad: coffeeBar.id, quantity: '', notes: '' },
+    { name: 'Bug spray', store: 'Other', salad: 'General', quantity: '2 cans', notes: '' },
+    { name: 'Sunscreen SPF 50', store: 'Other', salad: 'General', quantity: '1', notes: '' },
+    { name: 'First aid kit', store: 'Other', salad: 'General', quantity: '1', notes: 'restock bandages' },
+    { name: 'Corn on the cob', store: 'Fresh Farm', salad: L(j4, 'lunch'), quantity: '12', notes: '' },
+    { name: 'Pesto + pasta', store: 'Aldi', salad: pasta.id, quantity: '2 boxes', notes: '' },
+    { name: 'Feta + mint', store: "Binny's", salad: melon.id, quantity: '1', notes: '' },
+    { name: 'Mixed greens', store: 'Fresh Farm', salad: green.id, quantity: '3 bags', notes: '' },
+    { name: 'Olives', store: "Binny's", salad: pickles.id, quantity: '2 jars', notes: '' },
+  ];
+}
+
 async function populateData() {
   try {
     console.log('Starting data population...\n');
+
+    console.log('Adding menu items...');
+    const menu = [];
+    for (const item of menuSeeds) {
+      const ref = await addDoc(collection(db, 'menu'), {
+        ...item,
+        createdAt: new Date(),
+      });
+      menu.push({ id: ref.id, ...item });
+      const displayName =
+        item.name || `${item.date} (${item.lunch || 'N/A'}/${item.dinner || 'N/A'})`;
+      console.log(`  ✓ Added menu: ${displayName} (${item.type})`);
+    }
+
+    console.log(`\n✓ Added ${menu.length} menu rows\n`);
+
+    const shoppingListItems = buildShoppingSeeds(menu);
 
     console.log('Adding shopping list items...');
     for (const item of shoppingListItems) {
       await addDoc(collection(db, 'shoppingList'), {
         ...item,
         checked: item.checked || false,
-        createdAt: new Date()
+        createdAt: new Date(),
       });
-      console.log(`  ✓ Added: ${item.name} (${item.store})`);
+      console.log(`  ✓ Added: ${item.name} (meal: ${item.salad})`);
     }
 
     console.log(`\n✓ Added ${shoppingListItems.length} shopping list items\n`);
-
-    console.log('Adding menu items...');
-    for (const item of menuItems) {
-      await addDoc(collection(db, 'menu'), {
-        ...item,
-        createdAt: new Date()
-      });
-      const displayName = item.name || `${item.date} (${item.lunch || 'N/A'}/${item.dinner || 'N/A'})`;
-      console.log(`  ✓ Added: ${displayName} (${item.type})`);
-    }
-
-    console.log(`\n✓ Added ${menuItems.length} menu items\n`);
     console.log('✅ Data population completed successfully!');
     process.exit(0);
   } catch (error) {

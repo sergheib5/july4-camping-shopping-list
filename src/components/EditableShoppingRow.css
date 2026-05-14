@@ -1,6 +1,6 @@
 .shopping-item-row {
   display: grid;
-  grid-template-columns: 35px minmax(200px, 4fr) 0px 150px 60px 0.5fr 50px;
+  grid-template-columns: 35px minmax(140px, 2.8fr) minmax(80px, 1fr) minmax(100px, 1.2fr) 56px minmax(72px, 1fr) 50px;
   gap: 12px;
   padding: 14px 20px;
   border-bottom: 1px solid #f0f0f0;
@@ -11,6 +11,21 @@
 
 .shopping-item-row.editing {
   grid-template-columns: 35px minmax(200px, 4fr) 180px 150px 60px 0.5fr 50px;
+  background: #fff9e6;
+  border-bottom: 2px solid #ffc107;
+  cursor: default;
+}
+.shopping-item-row--meal-grouped {
+  grid-template-columns: 35px minmax(140px, 2.8fr) minmax(80px, 1fr) 56px minmax(72px, 1fr) 50px;
+}
+
+.shopping-item-row--meal-grouped .col-salad--hidden {
+  display: none;
+  min-width: 0;
+  width: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
 }
 
 .shopping-item-row:hover {
@@ -20,12 +35,6 @@
 .shopping-item-row.checked {
   background: #f5f5f5;
   opacity: 0.7;
-}
-
-.shopping-item-row.editing {
-  background: #fff9e6;
-  border-bottom: 2px solid #ffc107;
-  cursor: default;
 }
 
 .col-checkbox {
@@ -100,11 +109,6 @@
 .col-store {
   display: flex;
   align-items: center;
-}
-
-.col-store-hidden {
-  visibility: hidden;
-  overflow: hidden;
 }
 
 .store-badge {

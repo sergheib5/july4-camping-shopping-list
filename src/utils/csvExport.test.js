@@ -11,7 +11,6 @@ describe('csvExport', () => {
   let mockRemoveChild;
   let mockClick;
   let mockLink;
-  let mockBlob;
   let mockURL;
 
   beforeEach(() => {
@@ -37,15 +36,15 @@ describe('csvExport', () => {
         this.type = arguments[1]?.type || '';
       }
     }
-    global.Blob = MockBlob;
+    globalThis.Blob = MockBlob;
     mockURL = {
       createObjectURL: vi.fn(() => 'blob:mock-url'),
       revokeObjectURL: vi.fn()
     };
-    global.URL = mockURL;
+    globalThis.URL = mockURL;
 
     // Mock window.alert
-    global.alert = vi.fn();
+    globalThis.alert = vi.fn();
   });
 
   afterEach(() => {
@@ -57,7 +56,8 @@ describe('csvExport', () => {
       const items = [
         {
           name: 'Apples',
-          store: 'Cooler & drinks',
+          store: 'Fresh Farm',
+          salad: 'General',
           quantity: '2 lbs',
           notes: 'Organic',
           checked: false,
@@ -65,7 +65,8 @@ describe('csvExport', () => {
         },
         {
           name: 'Milk',
-          store: 'Snacks',
+          store: 'Aldi',
+          salad: 'General',
           quantity: '1 gallon',
           notes: '',
           checked: true,
@@ -73,7 +74,7 @@ describe('csvExport', () => {
         }
       ];
 
-      exportShoppingListToCSV(items);
+      exportShoppingListToCSV(items, []);
 
       expect(mockCreateElement).toHaveBeenCalledWith('a');
       expect(mockLink.setAttribute).toHaveBeenCalledWith('href', 'blob:mock-url');
@@ -86,13 +87,13 @@ describe('csvExport', () => {
 
     it('should handle empty items array', () => {
       exportShoppingListToCSV([]);
-      expect(global.alert).toHaveBeenCalledWith('No shopping list items to export');
+      expect(globalThis.alert).toHaveBeenCalledWith('No shopping list items to export');
       expect(mockCreateElement).not.toHaveBeenCalled();
     });
 
     it('should handle null items', () => {
       exportShoppingListToCSV(null);
-      expect(global.alert).toHaveBeenCalledWith('No shopping list items to export');
+      expect(globalThis.alert).toHaveBeenCalledWith('No shopping list items to export');
     });
 
     it('should handle items with missing fields', () => {
@@ -100,13 +101,14 @@ describe('csvExport', () => {
         {
           name: 'Test Item',
           store: '',
+          salad: 'General',
           quantity: null,
           notes: undefined,
           checked: false
         }
       ];
 
-      exportShoppingListToCSV(items);
+      exportShoppingListToCSV(items, []);
       expect(mockCreateElement).toHaveBeenCalled();
       expect(mockClick).toHaveBeenCalled();
     });
@@ -116,6 +118,7 @@ describe('csvExport', () => {
         {
           name: 'Item with "quotes"',
           store: 'Store, with comma',
+          salad: 'General',
           quantity: '1\nnewline',
           notes: 'Normal notes',
           checked: false,
@@ -123,7 +126,7 @@ describe('csvExport', () => {
         }
       ];
 
-      exportShoppingListToCSV(items);
+      exportShoppingListToCSV(items, []);
       expect(mockCreateElement).toHaveBeenCalled();
       expect(mockClick).toHaveBeenCalled();
     });
@@ -133,6 +136,7 @@ describe('csvExport', () => {
         {
           name: 'Test',
           store: 'Store',
+          salad: 'General',
           quantity: '1',
           notes: '',
           checked: false,
@@ -140,7 +144,7 @@ describe('csvExport', () => {
         }
       ];
 
-      exportShoppingListToCSV(items);
+      exportShoppingListToCSV(items, []);
       expect(mockCreateElement).toHaveBeenCalled();
       expect(mockClick).toHaveBeenCalled();
     });
@@ -169,19 +173,19 @@ describe('csvExport', () => {
 
     it('should handle empty menu items', () => {
       exportMenuToCSV([]);
-      expect(global.alert).toHaveBeenCalledWith('No menu items to export');
+      expect(globalThis.alert).toHaveBeenCalledWith('No menu items to export');
     });
 
     it('should handle null menu items', () => {
       exportMenuToCSV(null);
-      expect(global.alert).toHaveBeenCalledWith('No menu items to export');
+      expect(globalThis.alert).toHaveBeenCalledWith('No menu items to export');
     });
   });
 
   describe('exportAllDataToCSV', () => {
     it('should export both shopping list and menu items', async () => {
       const mockGetAllShoppingListItems = vi.fn().mockResolvedValue([
-        { name: 'Item 1', store: 'Store 1', quantity: '1', notes: '', checked: false }
+        { name: 'Item 1', store: 'Store 1', salad: 'General', quantity: '1', notes: '', checked: false }
       ]);
       const mockGetAllMenuItems = vi.fn().mockResolvedValue([
         { type: 'meal', name: 'Breakfast', date: '2024-01-01', lunch: '', dinner: '', preparedBy: '' }
@@ -200,7 +204,7 @@ describe('csvExport', () => {
 
       await exportAllDataToCSV(mockGetAllShoppingListItems, mockGetAllMenuItems);
 
-      expect(global.alert).toHaveBeenCalledWith('No data found to export.');
+      expect(globalThis.alert).toHaveBeenCalledWith('No data found to export.');
     });
 
     it('should handle errors gracefully', async () => {
@@ -209,12 +213,12 @@ describe('csvExport', () => {
 
       await exportAllDataToCSV(mockGetAllShoppingListItems, mockGetAllMenuItems);
 
-      expect(global.alert).toHaveBeenCalledWith('Failed to export data. Please try again.');
+      expect(globalThis.alert).toHaveBeenCalledWith('Failed to export data. Please try again.');
     });
 
     it('should export only shopping list if menu is empty', async () => {
       const mockGetAllShoppingListItems = vi.fn().mockResolvedValue([
-        { name: 'Item 1', store: 'Store 1', quantity: '1', notes: '', checked: false }
+        { name: 'Item 1', store: 'Store 1', salad: 'General', quantity: '1', notes: '', checked: false }
       ]);
       const mockGetAllMenuItems = vi.fn().mockResolvedValue([]);
 

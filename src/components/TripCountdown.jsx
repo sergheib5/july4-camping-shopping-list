@@ -25,7 +25,7 @@ const TripCountdown = () => {
 
   return (
     <div className="countdown-container">
-      <span className="countdown-label">Leaves in</span>
+      <span className="countdown-label">Starts in</span>
       <div className="countdown-time" aria-live="polite">
         <span className="time-unit">
           <span className="time-value">{days}</span>

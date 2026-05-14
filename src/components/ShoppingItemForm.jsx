@@ -1,38 +1,61 @@
-import { useState, useEffect } from 'react';
-import useSalads from '../hooks/useSalads';
+import { useState, useEffect, useMemo } from 'react';
+import useMenuMeals from '../hooks/useMenuMeals';
 import { STORES, DEFAULT_STORE } from '../utils/constants';
+import {
+  resolveNormalizedMealKey,
+  UNASSIGNED_MEAL_VALUE,
+  buildCampMealAssignmentOptions,
+} from '../utils/menuMeals';
 import './ShoppingItemForm.css';
 
+const mealSelectValue = (item, menuItems) => {
+  if (!item) return UNASSIGNED_MEAL_VALUE;
+  const k = resolveNormalizedMealKey(item, menuItems);
+  return k === UNASSIGNED_MEAL_VALUE ? UNASSIGNED_MEAL_VALUE : k;
+};
+
 const ShoppingItemForm = ({ item, onSave, onCancel }) => {
-  const salads = useSalads();
+  const { menuItems } = useMenuMeals();
   const [formData, setFormData] = useState({
     name: '',
     store: DEFAULT_STORE,
-    salad: 'General',
+    salad: UNASSIGNED_MEAL_VALUE,
     quantity: '',
-    notes: ''
+    notes: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const assignmentOptions = useMemo(
+    () => buildCampMealAssignmentOptions(menuItems, formData.salad),
+    [menuItems, formData.salad],
+  );
 
   useEffect(() => {
     if (item) {
       setFormData({
         name: item.name || '',
         store: item.store || DEFAULT_STORE,
-        salad: item.salad || 'General',
+        salad: mealSelectValue(item, menuItems),
         quantity: item.quantity || '',
-        notes: item.notes || ''
+        notes: item.notes || '',
+      });
+    } else {
+      setFormData({
+        name: '',
+        store: DEFAULT_STORE,
+        salad: UNASSIGNED_MEAL_VALUE,
+        quantity: '',
+        notes: '',
       });
     }
-  }, [item]);
+  }, [item, menuItems]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // onSave handles both add and update
       await onSave(formData, item?.id);
       setIsSubmitting(false);
     } catch (error) {
@@ -44,9 +67,9 @@ const ShoppingItemForm = ({ item, onSave, onCancel }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -78,14 +101,16 @@ const ShoppingItemForm = ({ item, onSave, onCancel }) => {
               onChange={handleChange}
               className="form-select"
             >
-              {STORES.map(store => (
-                <option key={store} value={store}>{store}</option>
+              {STORES.map((store) => (
+                <option key={store} value={store}>
+                  {store}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="salad">Camp meal</label>
+            <label htmlFor="salad">Menu meal</label>
             <select
               id="salad"
               name="salad"
@@ -93,9 +118,11 @@ const ShoppingItemForm = ({ item, onSave, onCancel }) => {
               onChange={handleChange}
               className="form-select"
             >
-              <option value="General">General</option>
-              {salads.map(salad => (
-                <option key={salad} value={salad}>{salad}</option>
+              <option value={UNASSIGNED_MEAL_VALUE}>Unassigned</option>
+              {assignmentOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
               ))}
             </select>
           </div>
@@ -150,4 +177,3 @@ const ShoppingItemForm = ({ item, onSave, onCancel }) => {
 };
 
 export default ShoppingItemForm;
-
