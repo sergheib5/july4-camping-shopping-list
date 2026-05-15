@@ -131,50 +131,6 @@
   outline-offset: 2px;
 }
 
-.header-toolbar-button--export {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: rgba(244, 241, 232, 0.82);
-  padding: 6px 8px;
-  min-width: 36px;
-  min-height: 36px;
-}
-
-.header-toolbar-button--export:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.32);
-  color: var(--color-cream, #f4f1e8);
-}
-
-.header-toolbar-button--export:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.header-toolbar-button--export:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.header-export-icon {
-  display: block;
-  opacity: 0.92;
-}
-
-.header-export-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(244, 241, 232, 0.2);
-  border-top-color: rgba(244, 241, 232, 0.75);
-  border-radius: 50%;
-  animation: header-export-spin 0.65s linear infinite;
-}
-
-@keyframes header-export-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @media (max-width: 768px) {
   .app-header {
     padding: 6px 12px;
@@ -199,17 +155,6 @@
     min-height: 32px;
     font-size: 12px;
   }
-
-  .header-toolbar-button--export {
-    padding: 5px 7px;
-    min-width: 32px;
-    min-height: 32px;
-  }
-
-  .header-export-icon {
-    width: 16px;
-    height: 16px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -231,16 +176,5 @@
     padding: 4px 8px;
     min-height: 28px;
     font-size: 11px;
-  }
-
-  .header-toolbar-button--export {
-    padding: 4px 6px;
-    min-width: 28px;
-    min-height: 28px;
-  }
-
-  .header-export-icon {
-    width: 15px;
-    height: 15px;
   }
 }

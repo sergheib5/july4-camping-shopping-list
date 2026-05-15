@@ -1,6 +1,6 @@
 /**
  * In-memory Firestore substitute for Vitest integration tests.
- * Mirrors the subset of `firebase/db` used by ShoppingList, Menu, Header export, and hooks.
+ * Mirrors the subset of `firebase/db` used by ShoppingList, Menu, and hooks.
  */
 
 let shopping = [];
