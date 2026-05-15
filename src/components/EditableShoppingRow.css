@@ -151,19 +151,32 @@
   max-width: 100%;
 }
 
+.salad-badge.salad-badge--general {
+  padding: 2px 8px;
+  background: #eceff1;
+  color: #757575;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .col-quantity {
-  color: #666;
-  font-size: 11px;
-  font-weight: bold;
+  color: #333;
+  font-size: 17px;
+  font-weight: 600;
+  font-synthesis: weight;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 28px;
+  line-height: 1.45;
 }
 
 .col-quantity span {
-  line-height: 1;
+  line-height: inherit;
   display: inline-flex;
   align-items: center;
 }
@@ -347,8 +360,7 @@
   }
 
   .col-quantity {
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 16px;
     justify-content: flex-end;
     padding-right: 2px;
     min-height: 24px;
@@ -415,11 +427,13 @@
   }
 
   .col-quantity {
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 15px;
     justify-content: flex-end;
     padding-right: 4px;
     min-height: 24px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .inline-input,

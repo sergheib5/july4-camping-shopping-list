@@ -73,6 +73,11 @@ describe('menuMeals', () => {
     expect(resolveNormalizedMealKey({ salad: UNASSIGNED_MEAL_VALUE }, menu)).toBe(UNASSIGNED_MEAL_VALUE);
   });
 
+  it('labelForMealKey should return General for unassigned', () => {
+    expect(labelForMealKey(UNASSIGNED_MEAL_VALUE, menu)).toBe('General');
+    expect(labelForMealKey('', menu)).toBe('General');
+  });
+
   it('labelForMealKey should describe daily slots', () => {
     expect(labelForMealKey('d1|lunch', menu)).toContain('Lunch');
     expect(labelForMealKey('d1|lunch', menu)).toContain('Tacos');

@@ -20,11 +20,11 @@ describe('InlineAddRow', () => {
 
     expect(screen.getByPlaceholderText('Add item')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Fresh Farm')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Unassigned')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('General')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Qty')).toBeInTheDocument();
   });
 
-  it('meal dropdown only lists camp meal options (plus Unassigned)', () => {
+  it('meal dropdown only lists camp meal options (plus General)', () => {
     render(<InlineAddRow onSave={mockOnSave} campMealOptions={campMealOptions} />);
     const mealSelect = screen.getByLabelText('Menu meal');
     const values = [...mealSelect.querySelectorAll('option')].map((o) => o.value);

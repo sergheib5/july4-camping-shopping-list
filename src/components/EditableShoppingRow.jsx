@@ -226,7 +226,7 @@ const EditableShoppingRow = ({
             className="inline-select"
             aria-label="Menu meal"
           >
-            <option value={UNASSIGNED_MEAL_VALUE}>Unassigned</option>
+            <option value={UNASSIGNED_MEAL_VALUE}>{UNASSIGNED_MEAL_VALUE}</option>
             {assignmentOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
@@ -300,7 +300,13 @@ const EditableShoppingRow = ({
         className={`col-salad ${hideMealBadge ? 'col-salad--hidden' : ''}`}
         aria-hidden={hideMealBadge || undefined}
       >
-        {!hideMealBadge ? <span className="salad-badge">{badgeLabel}</span> : null}
+        {!hideMealBadge ? (
+          <span
+            className={`salad-badge${badgeLabel === UNASSIGNED_MEAL_VALUE ? ' salad-badge--general' : ''}`}
+          >
+            {badgeLabel}
+          </span>
+        ) : null}
       </div>
       <div className="col-quantity">
         <span>{item.quantity || '-'}</span>

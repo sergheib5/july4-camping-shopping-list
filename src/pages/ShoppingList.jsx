@@ -23,8 +23,6 @@ import {
 import { triggerStoreConfetti, triggerCompleteConfetti } from '../utils/confetti';
 import './ShoppingList.css';
 
-const NO_MEAL_SECTION = 'No meal assigned';
-
 const storeBucket = (item) => normalizeRetailStore(item.store);
 
 const ShoppingList = () => {
@@ -207,16 +205,13 @@ const ShoppingList = () => {
 
     return keys.map((mealKey) => {
       const title =
-        mealKey === UNASSIGNED_MEAL_VALUE
-          ? NO_MEAL_SECTION
-          : labelForMealKey(mealKey, menuItems);
+        labelForMealKey(mealKey, menuItems);
       return { mealKey, title, items: map.get(mealKey) };
     });
   }, [filteredItems, menuItems, mealOptions]);
 
   const mealChipLabel = (mealKey) => {
     if (mealKey === 'All') return 'All Meals';
-    if (mealKey === UNASSIGNED_MEAL_VALUE) return NO_MEAL_SECTION;
     return labelForMealKey(mealKey, menuItems);
   };
 
@@ -336,7 +331,10 @@ const ShoppingList = () => {
               <div className="shopping-list-table">
                 <div className="table-body">
                   {mealSections.map(({ mealKey, title, items: sectionItems }) => (
-                    <section key={mealKey} className="meal-section">
+                    <section
+                      key={mealKey}
+                      className={`meal-section${mealKey === UNASSIGNED_MEAL_VALUE ? ' meal-section--general' : ''}`}
+                    >
                       <h3 className="meal-section__title">{title}</h3>
                       <div className="meal-section__rows">
                         {sectionItems.map((item) => (

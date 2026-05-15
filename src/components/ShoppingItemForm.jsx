@@ -118,7 +118,7 @@ const ShoppingItemForm = ({ item, onSave, onCancel }) => {
               onChange={handleChange}
               className="form-select"
             >
-              <option value={UNASSIGNED_MEAL_VALUE}>Unassigned</option>
+              <option value={UNASSIGNED_MEAL_VALUE}>{UNASSIGNED_MEAL_VALUE}</option>
               {assignmentOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}

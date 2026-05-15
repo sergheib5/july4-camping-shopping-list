@@ -69,9 +69,9 @@ describe('EditableShoppingRow', () => {
     expect(mockOnToggle).toHaveBeenCalledWith('1', true);
   });
 
-  it('should display Unassigned when salad is missing', () => {
+  it('should display General when salad is missing', () => {
     renderRow({ ...mockItem, salad: undefined });
-    expect(screen.getByText('Unassigned')).toBeInTheDocument();
+    expect(screen.getByText('General')).toBeInTheDocument();
   });
 
   it('should map legacy salad name to menu label', () => {

@@ -133,7 +133,7 @@ export const resolveNormalizedMealKey = (item, menuItems) => {
 
 export const labelForMealKey = (mealKey, menuItems) => {
   if (mealKey == null || mealKey === '' || mealKey === UNASSIGNED_MEAL_VALUE) {
-    return 'Unassigned';
+    return UNASSIGNED_MEAL_VALUE;
   }
 
   if (typeof mealKey === 'string' && mealKey.includes('|')) {

@@ -118,7 +118,7 @@ const InlineAddRow = ({ onSave, campMealOptions = [] }) => {
           onKeyDown={handleKeyDown}
           aria-label="Menu meal"
         >
-          <option value={UNASSIGNED_MEAL_VALUE}>Unassigned</option>
+          <option value={UNASSIGNED_MEAL_VALUE}>{UNASSIGNED_MEAL_VALUE}</option>
           {campMealOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}

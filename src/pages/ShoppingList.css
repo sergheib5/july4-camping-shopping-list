@@ -150,6 +150,16 @@
   border-bottom: 1px solid #eceff1;
 }
 
+.meal-section--general .meal-section__title {
+  padding: 4px 20px 2px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #9aa0a6;
+  background: transparent;
+  border-bottom: none;
+}
+
 .meal-section__rows {
   display: flex;
   flex-direction: column;

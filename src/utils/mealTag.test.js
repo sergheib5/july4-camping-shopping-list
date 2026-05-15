@@ -2,13 +2,13 @@ import { describe, it, expect } from 'vitest';
 import { MEAL_TAG_UNASSIGNED_VALUE, formatMealTagForDisplay } from './mealTag';
 
 describe('mealTag', () => {
-  it('should show Unassigned for General sentinel', () => {
-    expect(formatMealTagForDisplay(MEAL_TAG_UNASSIGNED_VALUE)).toBe('Unassigned');
+  it('should show General for General sentinel', () => {
+    expect(formatMealTagForDisplay(MEAL_TAG_UNASSIGNED_VALUE)).toBe('General');
   });
 
-  it('should show Unassigned for empty', () => {
-    expect(formatMealTagForDisplay('')).toBe('Unassigned');
-    expect(formatMealTagForDisplay(undefined)).toBe('Unassigned');
+  it('should show General for empty', () => {
+    expect(formatMealTagForDisplay('')).toBe('General');
+    expect(formatMealTagForDisplay(undefined)).toBe('General');
   });
 
   it('should pass through named dishes', () => {
