@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   STORES,
-  DEFAULT_STORE,
+  coerceStoreFromItem,
   AUTO_SAVE_DEBOUNCE_MS,
   CLICK_OUTSIDE_DELAY_MS,
-  getStoreColor,
+  getStoreGradient,
 } from '../utils/constants';
 import {
   resolveNormalizedMealKey,
@@ -12,6 +12,8 @@ import {
   UNASSIGNED_MEAL_VALUE,
   buildCampMealAssignmentOptions,
 } from '../utils/menuMeals';
+import StoreBrandMark from './StoreBrandMark';
+import QuantityDisplay from './QuantityDisplay';
 import './EditableShoppingRow.css';
 
 const mealSelectValue = (item, menuItems) => {
@@ -30,7 +32,7 @@ const EditableShoppingRow = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     name: item.name || '',
-    store: item.store || DEFAULT_STORE,
+    store: coerceStoreFromItem(item.store),
     salad: mealSelectValue(item, menuItems),
     quantity: item.quantity || '',
     notes: item.notes || '',
@@ -53,7 +55,7 @@ const EditableShoppingRow = ({
     if (!isEditing) {
       setEditData({
         name: item.name || '',
-        store: item.store || DEFAULT_STORE,
+        store: coerceStoreFromItem(item.store),
         salad: mealSelectValue(item, menuItems),
         quantity: item.quantity || '',
         notes: item.notes || '',
@@ -78,7 +80,7 @@ const EditableShoppingRow = ({
       setIsEditing(true);
       setEditData({
         name: item.name || '',
-        store: item.store || DEFAULT_STORE,
+        store: coerceStoreFromItem(item.store),
         salad: mealSelectValue(item, menuItems),
         quantity: item.quantity || '',
         notes: item.notes || '',
@@ -125,7 +127,7 @@ const EditableShoppingRow = ({
     }
     setEditData({
       name: item.name || '',
-      store: item.store || DEFAULT_STORE,
+      store: coerceStoreFromItem(item.store),
       salad: mealSelectValue(item, menuItems),
       quantity: item.quantity || '',
       notes: item.notes || '',
@@ -172,7 +174,7 @@ const EditableShoppingRow = ({
     menuItems,
   );
 
-  const storeLabel = (item.store ?? '').trim() || DEFAULT_STORE;
+  const storeLabel = coerceStoreFromItem(item.store);
 
   if (isEditing) {
     return (
@@ -252,6 +254,8 @@ const EditableShoppingRow = ({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             className="inline-input"
+            aria-label="Notes"
+            placeholder="Notes (optional)"
           />
         </div>
         <div className="col-actions">
@@ -290,10 +294,11 @@ const EditableShoppingRow = ({
       <div className="col-store">
         <span
           className="store-badge"
-          style={{ backgroundColor: getStoreColor(item.store) }}
+          style={{ background: getStoreGradient(item.store) }}
           title={storeLabel}
         >
-          {storeLabel}
+          <StoreBrandMark store={item.store} />
+          <span className="store-badge__label">{storeLabel}</span>
         </span>
       </div>
       <div
@@ -309,7 +314,7 @@ const EditableShoppingRow = ({
         ) : null}
       </div>
       <div className="col-quantity">
-        <span>{item.quantity || '-'}</span>
+        <QuantityDisplay quantity={item.quantity} />
       </div>
       <div className="col-notes">
         <span className="notes-text">{item.notes || ''}</span>

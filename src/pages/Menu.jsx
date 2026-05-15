@@ -112,7 +112,7 @@ const Menu = () => {
           {/* Daily Menu Section */}
           <section className="menu-section">
             <div className="section-header">
-              <h2>📅 Daily cook plan</h2>
+              <h2 className="section-header__title">Daily cook plan</h2>
               <button 
                 className="add-section-button"
                 onClick={() => handleAddNew('daily')}
@@ -159,7 +159,7 @@ const Menu = () => {
           {/* Camp meals — stored as type "salad" in Firestore for schema parity */}
           <section className="menu-section">
             <div className="section-header">
-              <h2>🔥 Camp meals</h2>
+              <h2 className="section-header__title">Camp meals</h2>
               <button 
                 className="add-section-button"
                 onClick={() => handleAddNew('salad')}
@@ -204,7 +204,7 @@ const Menu = () => {
           {/* Snacks Section */}
           <section className="menu-section">
             <div className="section-header">
-              <h2>🍿 Snacks</h2>
+              <h2 className="section-header__title">Snacks</h2>
               <button 
                 className="add-section-button"
                 onClick={() => handleAddNew('snack')}
@@ -239,7 +239,7 @@ const Menu = () => {
           {/* Drinks Section */}
           <section className="menu-section">
             <div className="section-header">
-              <h2>🥤 Drinks</h2>
+              <h2 className="section-header__title">Drinks</h2>
               <button 
                 className="add-section-button"
                 onClick={() => handleAddNew('drink')}

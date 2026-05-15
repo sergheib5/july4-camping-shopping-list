@@ -1,0 +1,18 @@
+.store-brand-mark,
+.store-brand-mark__fallback {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+}
+
+.store-brand-mark--tiny,
+.store-brand-mark__fallback.store-brand-mark--tiny {
+  width: 12px;
+  height: 12px;
+}
+
+.store-brand-mark__fallback {
+  color: inherit;
+}

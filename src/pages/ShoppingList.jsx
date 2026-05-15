@@ -13,7 +13,13 @@ import {
   toggleShoppingItem,
   deleteShoppingItem,
 } from '../firebase/db';
-import { STORES, getStoreColor, normalizeRetailStore } from '../utils/constants';
+import {
+  STORES,
+  getStoreColor,
+  getStoreGradient,
+  normalizeRetailStore,
+} from '../utils/constants';
+import StoreBrandMark from '../components/StoreBrandMark';
 import {
   resolveNormalizedMealKey,
   labelForMealKey,
@@ -237,6 +243,7 @@ const ShoppingList = () => {
       <Header />
       <main className="main-content">
         <div className="shopping-list-container">
+          <div className="shopping-list-controls">
           <div
             className="store-filter store-filter--retail"
             role="toolbar"
@@ -259,13 +266,20 @@ const ShoppingList = () => {
                   className={`filter-button ${active ? 'active' : ''}`}
                   onClick={() => setSelectedStore(store)}
                   style={{
-                    backgroundColor: active ? color : 'white',
+                    background: active ? getStoreGradient(store) : 'white',
                     color: active ? '#fff' : '#333',
-                    borderColor: color,
-                    borderWidth: 2,
+                    border: active
+                      ? '1px solid rgba(255, 255, 255, 0.55)'
+                      : `2px solid ${color}`,
+                    boxShadow: active
+                      ? 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 10px rgba(15, 23, 42, 0.1)'
+                      : undefined,
                   }}
                 >
-                  {store}
+                  <span className="filter-button__content">
+                    <StoreBrandMark store={store} size="tiny" />
+                    {store}
+                  </span>
                 </button>
               );
             })}
@@ -312,6 +326,7 @@ const ShoppingList = () => {
           />
 
           <InlineAddRow onSave={handleAddItem} campMealOptions={campMealOptions} />
+          </div>
 
           <div className="shopping-list-fill">
             {filteredItems.length === 0 ? (

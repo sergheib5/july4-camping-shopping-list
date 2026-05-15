@@ -14,7 +14,7 @@ describe('EditableShoppingRow', () => {
   const mockItem = {
     id: '1',
     name: 'Test Item',
-    store: 'Fresh Farm',
+    store: 'Fresh Farms',
     salad: 's1',
     quantity: '2 lbs',
     notes: 'Test notes',
@@ -57,7 +57,7 @@ describe('EditableShoppingRow', () => {
     fireEvent.click(row);
 
     expect(screen.getByDisplayValue('Test Item')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Fresh Farm')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Fresh Farms')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Caesar Salad')).toBeInTheDocument();
   });
 

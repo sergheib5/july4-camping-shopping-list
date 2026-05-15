@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import useMenuMeals from '../hooks/useMenuMeals';
-import { STORES, DEFAULT_STORE } from '../utils/constants';
+import { STORES, DEFAULT_STORE, coerceStoreFromItem } from '../utils/constants';
 import {
   resolveNormalizedMealKey,
   UNASSIGNED_MEAL_VALUE,
@@ -35,7 +35,7 @@ const ShoppingItemForm = ({ item, onSave, onCancel }) => {
     if (item) {
       setFormData({
         name: item.name || '',
-        store: item.store || DEFAULT_STORE,
+        store: coerceStoreFromItem(item.store),
         salad: mealSelectValue(item, menuItems),
         quantity: item.quantity || '',
         notes: item.notes || '',

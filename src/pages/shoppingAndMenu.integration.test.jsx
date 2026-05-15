@@ -66,14 +66,13 @@ describe('Shopping list & menu (in-memory Firebase)', () => {
       expect(screen.getByRole('button', { name: 'BBQ night' })).toBeInTheDocument();
     });
 
-    const nameInput = screen.getByPlaceholderText('Add item');
-    const storeSelect = screen.getByLabelText('Store lane');
-    const mealSelect = screen.getByLabelText('Menu meal');
+    const nameInput = screen.getByLabelText('Add item');
 
     await user.type(nameInput, 'Burger buns');
-    await user.selectOptions(storeSelect, 'Aldi');
-    await user.selectOptions(mealSelect, 'camp-meal-bbq');
     await user.keyboard('{Enter}');
+    await user.selectOptions(screen.getByLabelText('Store lane'), 'Aldi');
+    await user.selectOptions(screen.getByLabelText('Menu meal'), 'camp-meal-bbq');
+    await user.click(screen.getByRole('button', { name: 'Add' }));
 
     await waitFor(() => {
       expect(screen.getByText('Burger buns')).toBeInTheDocument();
@@ -81,9 +80,10 @@ describe('Shopping list & menu (in-memory Firebase)', () => {
 
     await user.clear(nameInput);
     await user.type(nameInput, 'Bratwurst');
-    await user.selectOptions(storeSelect, 'Costco');
-    await user.selectOptions(mealSelect, 'camp-meal-bbq');
     await user.keyboard('{Enter}');
+    await user.selectOptions(screen.getByLabelText('Store lane'), 'Costco');
+    await user.selectOptions(screen.getByLabelText('Menu meal'), 'camp-meal-bbq');
+    await user.click(screen.getByRole('button', { name: 'Add' }));
 
     await waitFor(() => {
       expect(screen.getByText('Bratwurst')).toBeInTheDocument();

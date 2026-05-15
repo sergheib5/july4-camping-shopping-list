@@ -16,6 +16,24 @@
   border-bottom: 2px solid #ffc107;
   cursor: default;
 }
+
+.shopping-item-row.editing .col-item,
+.shopping-item-row.editing .col-store,
+.shopping-item-row.editing .col-salad,
+.shopping-item-row.editing .col-quantity,
+.shopping-item-row.editing .col-notes {
+  min-width: 0;
+  width: 100%;
+}
+
+.shopping-item-row.editing .col-item:hover,
+.shopping-item-row.editing .col-store:hover,
+.shopping-item-row.editing .col-salad:hover,
+.shopping-item-row.editing .col-quantity:hover,
+.shopping-item-row.editing .col-notes:hover {
+  background: transparent;
+  padding: 0;
+}
 .shopping-item-row--meal-grouped {
   grid-template-columns:
     35px minmax(120px, 2.4fr) minmax(104px, 1.25fr) minmax(48px, 56px) minmax(0, 0.55fr) 48px;
@@ -125,7 +143,7 @@
 
 .store-badge {
   padding: 5px 12px;
-  background: #9e9e9e; /* default gray for Other */
+  background: #9e9e9e; /* superseded by inline store gradient */
   color: white;
   border-radius: 12px;
   font-size: 12px;
@@ -133,8 +151,35 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   max-width: 100%;
+  min-width: 0;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 1px 2px rgba(0, 0, 0, 0.14);
+}
+
+.store-badge .store-brand-mark,
+.store-badge .store-brand-mark__fallback {
+  border-radius: 6px;
+  padding: 2px;
+  box-sizing: content-box;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.07),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.store-badge .store-brand-mark__fallback {
+  color: #374151;
+}
+
+.store-badge__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .salad-badge {
@@ -172,13 +217,11 @@
   align-items: center;
   justify-content: center;
   min-height: 28px;
-  line-height: 1.45;
+  line-height: 1.1;
 }
 
-.col-quantity span {
-  line-height: inherit;
-  display: inline-flex;
-  align-items: center;
+.col-quantity .quantity-display {
+  line-height: 1.1;
 }
 
 .col-notes {
@@ -329,7 +372,66 @@
   }
 
   .shopping-item-row.editing {
-    grid-template-columns: 30px minmax(150px, 3fr) 150px 120px 60px 0.5fr 55px;
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    gap: 8px 10px;
+    padding: 12px 14px;
+    align-items: stretch;
+  }
+
+  .shopping-item-row.editing .col-checkbox {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    align-self: start;
+    padding-top: 6px;
+  }
+
+  .shopping-item-row.editing .col-item {
+    grid-column: 2 / 4;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .shopping-item-row.editing .col-store {
+    grid-column: 2 / 4;
+    grid-row: 2;
+  }
+
+  .shopping-item-row.editing .col-salad {
+    grid-column: 2 / 4;
+    grid-row: 3;
+  }
+
+  .shopping-item-row.editing .col-quantity {
+    grid-column: 2;
+    grid-row: 4;
+    justify-content: stretch;
+  }
+
+  .shopping-item-row.editing .col-notes {
+    display: none;
+  }
+
+  .shopping-item-row.editing .col-actions {
+    grid-column: 3;
+    grid-row: 4;
+    align-self: center;
+    padding-right: 0;
+  }
+
+  .shopping-item-row--meal-grouped.editing .col-salad {
+    display: none;
+  }
+
+  .shopping-item-row--meal-grouped.editing .col-store {
+    grid-row: 2;
+  }
+
+  .shopping-item-row--meal-grouped.editing .col-quantity {
+    grid-row: 3;
+  }
+
+  .shopping-item-row--meal-grouped.editing .col-actions {
+    grid-row: 3;
   }
 
   .col-salad {
@@ -361,8 +463,8 @@
 
   .col-quantity {
     font-size: 16px;
-    justify-content: flex-end;
-    padding-right: 2px;
+    align-items: center;
+    justify-content: center;
     min-height: 24px;
   }
 
@@ -396,8 +498,8 @@
     grid-template-columns: 28px minmax(64px, 1.35fr) minmax(92px, 1.1fr) 42px 36px;
   }
 
-  .shopping-item-row.editing {
-    grid-template-columns: 28px minmax(100px, 2fr) 100px 100px 55px 0 55px;
+  .shopping-item-row.editing .col-notes {
+    display: none;
   }
 
   .col-salad {
@@ -428,12 +530,13 @@
 
   .col-quantity {
     font-size: 15px;
-    justify-content: flex-end;
-    padding-right: 4px;
+    align-items: center;
+    justify-content: center;
     min-height: 24px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  }
+
+  .col-quantity .quantity-display__unit {
+    font-size: 8px;
   }
 
   .inline-input,

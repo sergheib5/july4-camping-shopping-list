@@ -9,52 +9,70 @@
 .menu-container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
 }
 
 .menu-section {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
 .section-header {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--color-paper, #fdfaf3);
+  border-bottom: 2px solid #ffc107;
+  color: var(--color-navy, #0f172a);
 }
 
-.section-header h2 {
+.section-header__title {
+  flex: 1 1 auto;
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .add-section-button {
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid white;
-  border-radius: 8px;
-  color: white;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  border: none;
+  border-radius: 20px;
+  color: #333;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 4px rgba(255, 152, 0, 0.25);
 }
 
 .add-section-button:hover {
-  background: white;
-  color: #667eea;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.35);
+}
+
+.add-section-button:active {
+  transform: translateY(0);
 }
 
 .empty-section {
-  padding: 40px 20px;
+  padding: 24px 16px;
   text-align: center;
-  color: #999;
-  font-size: 14px;
+  color: #888;
+  font-size: 13px;
 }
 
 .daily-menu-table,
@@ -64,22 +82,22 @@
 
 .table-header {
   display: grid;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: 10px;
+  padding: 10px 14px;
   background: #f8f9fa;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #666;
+  letter-spacing: 0.04em;
+  color: #757575;
 }
 
 .daily-menu-table .table-header {
-  grid-template-columns: 1fr 1fr 1fr 60px;
+  grid-template-columns: 1fr 1fr 1fr 44px;
 }
 
 .salads-table .table-header {
-  grid-template-columns: 1fr 1fr 60px;
+  grid-template-columns: 1fr 1fr 44px;
 }
 
 .table-body {
@@ -89,12 +107,12 @@
 
 .menu-row {
   display: grid;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: 10px;
+  padding: 10px 14px;
   border-bottom: 1px solid #f0f0f0;
   align-items: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .menu-row:hover {
@@ -102,11 +120,11 @@
 }
 
 .daily-menu-table .menu-row {
-  grid-template-columns: 1fr 1fr 1fr 60px;
+  grid-template-columns: 1fr 1fr 1fr 44px;
 }
 
 .salads-table .menu-row {
-  grid-template-columns: 1fr 1fr 60px;
+  grid-template-columns: 1fr 1fr 44px;
 }
 
 .col-date,
@@ -116,6 +134,7 @@
 .col-prepared {
   color: #333;
   font-weight: 500;
+  font-size: 14px;
 }
 
 .col-actions {
@@ -129,84 +148,103 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  font-size: 18px;
-  width: 28px;
-  height: 28px;
+  font-size: 16px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
+  color: #888;
   line-height: 1;
-  transition: all 0.2s ease;
+  transition: color 0.15s ease, transform 0.15s ease;
   font-weight: 300;
 }
 
 .cancel-button:hover {
   color: #c62828;
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .snacks-list {
-  padding: 20px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .snack-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  background: #f8f9fa;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #eee;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .snack-item:hover {
-  background: #e9ecef;
-  transform: translateX(4px);
+  background: #fffbf0;
+  border-color: #ffc107;
 }
 
 .snack-item span {
   font-weight: 500;
+  font-size: 14px;
   color: #333;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
   .daily-menu-table .table-header,
   .daily-menu-table .menu-row {
-    grid-template-columns: 1fr 1fr 1fr 50px;
+    grid-template-columns: 1fr 1fr 1fr 40px;
     gap: 8px;
-    padding: 12px 16px;
+    padding: 10px 12px;
   }
 
   .salads-table .table-header,
   .salads-table .menu-row {
-    grid-template-columns: 1fr 1fr 50px;
+    grid-template-columns: 1fr 1fr 40px;
     gap: 8px;
-    padding: 12px 16px;
+    padding: 10px 12px;
   }
 }
 
 @media (max-width: 480px) {
   .section-header {
-    padding: 16px;
+    padding: 9px 12px;
   }
 
-  .section-header h2 {
-    font-size: 18px;
+  .section-header__title {
+    font-size: 14px;
+  }
+
+  .add-section-button {
+    padding: 5px 10px;
+    font-size: 12px;
   }
 
   .daily-menu-table .table-header,
   .daily-menu-table .menu-row {
-    grid-template-columns: 80px 1fr 1fr 40px;
+    grid-template-columns: 72px 1fr 1fr 36px;
     font-size: 13px;
   }
 
   .col-date {
     font-size: 12px;
   }
-}
 
+  .snack-item {
+    padding: 8px 10px;
+  }
+
+  .snack-item span {
+    font-size: 13px;
+  }
+}

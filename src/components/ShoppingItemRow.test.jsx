@@ -57,7 +57,7 @@ describe('ShoppingItemRow', () => {
       />
     );
 
-    expect(screen.getByText('2 lbs')).toBeInTheDocument();
+    expect(screen.getByLabelText('2 lbs')).toBeInTheDocument();
   });
 
   it('should render notes', () => {

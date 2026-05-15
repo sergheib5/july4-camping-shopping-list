@@ -59,7 +59,7 @@
 
 .store-badge {
   padding: 4px 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #9e9e9e;
   color: white;
   border-radius: 12px;
   font-size: 12px;
@@ -67,11 +67,44 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-width: 0;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 1px 2px rgba(0, 0, 0, 0.14);
+}
+
+.store-badge .store-brand-mark,
+.store-badge .store-brand-mark__fallback {
+  border-radius: 6px;
+  padding: 2px;
+  box-sizing: content-box;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.07),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.store-badge .store-brand-mark__fallback {
+  color: #374151;
+}
+
+.store-badge__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .col-quantity {
   color: #666;
   font-size: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 24px;
 }
 
 .col-notes {

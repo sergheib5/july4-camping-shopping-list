@@ -115,7 +115,7 @@ const MenuItemForm = ({ item, type, onSave, onCancel }) => {
                   value={formData.date}
                   onChange={handleChange}
                   required
-                  placeholder="e.g., Dec 30, Jan 1"
+                  placeholder="e.g. July 2, July 4"
                   className="form-input"
                 />
               </div>
@@ -127,7 +127,7 @@ const MenuItemForm = ({ item, type, onSave, onCancel }) => {
                   name="lunch"
                   value={formData.lunch}
                   onChange={handleChange}
-                  placeholder="Enter lunch menu"
+                  placeholder="e.g. burgers, tacos"
                   className="form-input"
                 />
               </div>
@@ -139,7 +139,7 @@ const MenuItemForm = ({ item, type, onSave, onCancel }) => {
                   name="dinner"
                   value={formData.dinner}
                   onChange={handleChange}
-                  placeholder="Enter dinner menu"
+                  placeholder="e.g. chili, foil packets"
                   className="form-input"
                 />
               </div>

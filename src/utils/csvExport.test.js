@@ -56,7 +56,7 @@ describe('csvExport', () => {
       const items = [
         {
           name: 'Apples',
-          store: 'Fresh Farm',
+          store: 'Fresh Farms',
           salad: 'General',
           quantity: '2 lbs',
           notes: 'Organic',

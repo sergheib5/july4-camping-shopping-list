@@ -1,0 +1,39 @@
+.quantity-display {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  max-width: 100%;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.quantity-display__amount {
+  font-size: inherit;
+  font-weight: inherit;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.quantity-display__unit {
+  font-size: 9px;
+  font-weight: 500;
+  color: #888;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  min-height: 1.15em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quantity-display__unit--placeholder {
+  visibility: hidden;
+}
+
+.quantity-display--empty {
+  color: #bbb;
+  font-weight: 500;
+}

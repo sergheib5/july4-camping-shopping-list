@@ -21,9 +21,16 @@
   background: transparent;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   flex: 1;
   min-height: 0;
+}
+
+.shopping-list-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .shopping-list-fill {
@@ -79,7 +86,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 12px;
+  padding: 10px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -102,6 +109,28 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+}
+
+.filter-button__content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Favicons are often boxed .ico assets — soft “token” behind the mark on gradient chips */
+.store-filter--retail .filter-button.active .store-brand-mark,
+.store-filter--retail .filter-button.active .store-brand-mark__fallback {
+  border-radius: 6px;
+  padding: 3px;
+  box-sizing: content-box;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 1px 2px rgba(15, 23, 42, 0.1);
+}
+
+.store-filter--retail .filter-button.active .store-brand-mark__fallback {
+  color: #374151;
 }
 
 .filter-button:hover {
@@ -140,22 +169,12 @@
 
 .meal-section__title {
   margin: 0;
-  padding: 12px 20px 8px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #555;
-  background: #fafbfc;
-  border-bottom: 1px solid #eceff1;
-}
-
-.meal-section--general .meal-section__title {
-  padding: 4px 20px 2px;
+  padding: 6px 14px 4px;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: #9aa0a6;
+  text-transform: uppercase;
+  color: #757575;
   background: transparent;
   border-bottom: none;
 }

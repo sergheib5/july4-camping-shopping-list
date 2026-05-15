@@ -1,8 +1,15 @@
 import { useState } from 'react';
+import { getStoreGradient, coerceStoreFromItem } from '../utils/constants';
+import StoreBrandMark from './StoreBrandMark';
+import QuantityDisplay from './QuantityDisplay';
 import './ShoppingItemRow.css';
 
 const ShoppingItemRow = ({ item, onToggle, onDelete, onEdit }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const storeLabel =
+    item.store != null && String(item.store).trim() !== ''
+      ? coerceStoreFromItem(item.store)
+      : 'Other';
 
   const handleCheckboxChange = (e) => {
     onToggle(item.id, e.target.checked);
@@ -28,10 +35,17 @@ const ShoppingItemRow = ({ item, onToggle, onDelete, onEdit }) => {
         </span>
       </div>
       <div className="col-store">
-        <span className="store-badge">{item.store || 'Other'}</span>
+        <span
+          className="store-badge"
+          style={{ background: getStoreGradient(item.store) }}
+          title={storeLabel}
+        >
+          <StoreBrandMark store={item.store} />
+          <span className="store-badge__label">{storeLabel}</span>
+        </span>
       </div>
       <div className="col-quantity">
-        <span>{item.quantity || '-'}</span>
+        <QuantityDisplay quantity={item.quantity} />
       </div>
       <div className="col-notes">
         <span className="notes-text">{item.notes || ''}</span>
