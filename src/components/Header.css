@@ -88,6 +88,24 @@
   white-space: nowrap;
 }
 
+.header-toolbar-button--terms {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: var(--color-cream, #f4f1e8);
+  padding: 6px 12px;
+  min-height: 36px;
+}
+
+.header-toolbar-button--terms:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+.header-toolbar-button--terms:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
 .header-toolbar-button--directions {
   background: #1a5fb4;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -170,6 +188,12 @@
     gap: 6px;
   }
 
+  .header-toolbar-button--terms {
+    padding: 5px 10px;
+    min-height: 32px;
+    font-size: 12px;
+  }
+
   .header-toolbar-button--directions {
     padding: 5px 10px;
     min-height: 32px;
@@ -195,6 +219,12 @@
 
   .header-content {
     gap: 6px;
+  }
+
+  .header-toolbar-button--terms {
+    padding: 4px 8px;
+    min-height: 28px;
+    font-size: 11px;
   }
 
   .header-toolbar-button--directions {

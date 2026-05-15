@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ShoppingList from './pages/ShoppingList';
 import Menu from './pages/Menu';
+import CampgroundTerms from './pages/CampgroundTerms';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useTripCountdown } from './hooks/useTripCountdown';
 import './App.css';
@@ -35,6 +36,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ShoppingList />} />
           <Route path="/menu" element={<Menu />} />
+          <Route path="/terms" element={<CampgroundTerms />} />
         </Routes>
       </Router>
     </ErrorBoundary>

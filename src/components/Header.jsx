@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import TripCountdown from './TripCountdown';
 import { getAllShoppingListItems, getAllMenuItems } from '../firebase/db';
 import { exportAllDataToCSV } from '../utils/csvExport';
@@ -8,6 +9,7 @@ import './Header.css';
 
 const Header = () => {
   const [isExporting, setIsExporting] = useState(false);
+  const location = useLocation();
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -34,6 +36,15 @@ const Header = () => {
       <div className="header-content">
         <TripCountdown />
         <div className="header-actions">
+          <Link
+            className="header-toolbar-button header-toolbar-button--terms"
+            to="/terms"
+            state={{ from: location.pathname }}
+            title="Campground rules — overview & full agreement"
+            aria-label="Campground rules: overview and full agreement text"
+          >
+            Terms
+          </Link>
           <a
             className="header-toolbar-button header-toolbar-button--directions"
             href={CAMP_DIRECTIONS_MAPS_URL}

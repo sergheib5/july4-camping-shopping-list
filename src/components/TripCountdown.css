@@ -42,6 +42,21 @@
   min-width: 2.25rem;
 }
 
+/* Dark outline so digits stay readable on busy header imagery */
+.countdown-time .time-value,
+.countdown-time .time-separator {
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000,
+    0 -1px 0 #000,
+    0 1px 0 #000,
+    -1px 0 0 #000,
+    1px 0 0 #000,
+    0 0 6px rgba(0, 0, 0, 0.55);
+}
+
 .time-value {
   font-family: 'Bebas Neue', Impact, sans-serif;
   font-size: 1.35rem;
