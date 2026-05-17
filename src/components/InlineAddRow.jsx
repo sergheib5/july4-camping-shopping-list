@@ -24,6 +24,7 @@ const InlineAddRow = ({ onSave, campMealOptions = [] }) => {
   const mealSelectRef = useRef(null);
   const quantityInputRef = useRef(null);
   const formRef = useRef(null);
+  const prevStepRef = useRef(step);
 
   const resetForm = useCallback(() => {
     setFormData(INITIAL_FORM);
@@ -37,7 +38,10 @@ const InlineAddRow = ({ onSave, campMealOptions = [] }) => {
 
   useEffect(() => {
     if (step === STEP_STORE) storeSelectRef.current?.focus();
-    if (step === STEP_DETAILS) quantityInputRef.current?.focus();
+    if (step === STEP_DETAILS && prevStepRef.current === STEP_STORE) {
+      quantityInputRef.current?.focus();
+    }
+    prevStepRef.current = step;
   }, [step]);
 
   const handleChange = (field, value) => {
@@ -61,6 +65,11 @@ const InlineAddRow = ({ onSave, campMealOptions = [] }) => {
   const goToDetails = useCallback(() => {
     setStep(STEP_DETAILS);
   }, []);
+
+  const handlePlusClick = () => {
+    setStep(STEP_DETAILS);
+    requestAnimationFrame(() => nameInputRef.current?.focus());
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -148,9 +157,16 @@ const InlineAddRow = ({ onSave, campMealOptions = [] }) => {
       aria-label="Add shopping item"
     >
       <div className="inline-add-row__name">
-        <span className="inline-add-row__plus" aria-hidden="true">
+        <button
+          type="button"
+          className="inline-add-row__plus"
+          onClick={handlePlusClick}
+          aria-label="Show store, meal, and quantity"
+          aria-expanded={showDetails}
+          aria-controls="inline-add-details"
+        >
           +
-        </span>
+        </button>
         <input
           ref={nameInputRef}
           type="text"
@@ -167,6 +183,7 @@ const InlineAddRow = ({ onSave, campMealOptions = [] }) => {
 
       {(showStore || showDetails) && (
         <div
+          id="inline-add-details"
           className="inline-add-row__details"
           role="group"
           aria-label="Item details"
